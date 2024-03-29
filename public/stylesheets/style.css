@@ -1,0 +1,42 @@
+body {
+  padding: 50px;
+  font: 18px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.sidebar-nav {
+  margin-top: 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.bookList{
+  list-style: none;
+  display: flex;
+  flex-flow: row;
+  flex-wrap: wrap;
+}
+
+.bookListItem{
+  word-wrap: break-word;
+  word-wrap:break-word;
+  max-width: 248px;
+  margin-right: 60px;
+  margin-bottom: 50px;
+}
+
+.bookListItem:last-child{
+  margin-right: 0px;
+}
+
+.bookListItem a{
+  font-family: optima;
+  font-weight: 700;
+}
+
+.bookListItem img{
+  margin-bottom:10px;
+}

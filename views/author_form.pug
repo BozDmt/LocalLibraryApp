@@ -1,0 +1,33 @@
+extends layout 
+
+block content
+    h1 #{title}
+
+    form(method='POST', enctype='multipart/form-data')
+        div.form-group
+            label(for='first_name') First name: 
+            input#first_name.form-control(type='text',name='first_name' required value=(undefined===author ? '':author.first_name))
+        div.form-group
+            label(for='last_name') Last name: 
+            input#last_name.form-control(type='text',name='last_name' required value=(undefined===author ? '':author.last_name))
+        div.form-group
+            label(for='date_of_birth') Date of birth: 
+            input#date_of_birth.form-control(type='date',name='date_of_birth' 
+            required value=(undefined===author ? '':author.dob_iso))
+        div.form-group
+            label(for='date_of_death') Date of passing: 
+            input#date_of_death.form-control(type='date',name='date_of_death' value=(undefined===author ? '':author.dod_iso))
+        div.form-group
+            label(for='author_photo') Author photo 
+            p
+                img(src= value=(undefined===author?'':author.photo), width='248', height='248', alt='No book cover')
+            input#author_photo.form-control(type='file', name='author_photo')
+            input#photo_url.form-control(type='hidden', name='photo_url', 
+                value=(undefined===author? '/authorPics/default_profile_pic.jpg':author.photo))
+        div.form-group
+            button.btn.btn-primary(type='submit') Submit
+
+    if errors 
+        ul 
+            for error in errors 
+                li= error.msg

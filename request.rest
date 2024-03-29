@@ -1,0 +1,9 @@
+GET http://localhost:3500/login/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYm9iY3JhYiIsImlhdCI6MTcxMTYxNzE5M30.a-zq4-eEIzuMckdaDTiRm-hWkvDNn7rB0gwTKQvcbik
+###
+POST http://localhost:3500/login
+Content-Type: application/json
+
+{
+    "username": "mitch"
+}
