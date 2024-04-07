@@ -1,9 +1,5 @@
 GET http://localhost:3500/login/users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYm9iY3JhYiIsImlhdCI6MTcxMTYxNzE5M30.a-zq4-eEIzuMckdaDTiRm-hWkvDNn7rB0gwTKQvcbik
+Cookie: jwt=eaJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDEiLCJpYXQiOjE3MTE3MzgwNDh9.Sm37QElMY2yXvcDZVdkgxcND_NqGMxR2CjwuaKc5pFA
 ###
-POST http://localhost:3500/login
-Content-Type: application/json
-
-{
-    "username": "mitch"
-}
+GET  http://localhost:3500/catalog
+Cookie: 

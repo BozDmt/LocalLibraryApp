@@ -1,9 +1,14 @@
 extends layout 
-
+block append head 
+  link(rel="stylesheet",href="/stylesheets/carousel.css")
 block content 
   h1= title 
   p Welcome to #[em LocalLib], the place where you can find all of the books you've been searching for! 
-
+  
+  ol(class="carousel") 
+    li 
+      img(src="/bookCovers/book_cover-1711095215704-764726407.jpg", alt="Book cover")
+    //-the carousel lies here
   h1 Dynamic count of records: 
 
   ul 

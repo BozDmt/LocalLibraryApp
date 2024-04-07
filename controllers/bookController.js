@@ -39,7 +39,8 @@ exports.index = asyncHandler(async(req,res,next)=>{
         author_count: numAuthors,
         genre_count: numGenres,
         bookinstance_count: numBookInstances,
-        avl_bookinstance_count: numAvailableBookInstances
+        avl_bookinstance_count: numAvailableBookInstances,
+        //way to determine if there is a user, and which role he is
     })
 })
 

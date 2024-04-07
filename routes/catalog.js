@@ -1,12 +1,14 @@
 const express = require('express')
 const router = express.Router()
+const authentication = require('./authenticateToken')
 
 const author_controller = require('../controllers/authorController')
 const book_controller = require('../controllers/bookController')
 const bookInstance_controller = require('../controllers/bookinstanceController')
 const genre_controller = require('../controllers/genreController')
 
-
+router.use(authentication.refreshAccessToken)
+// router.use(authentication.authenticateToken)
 //home page
 router.get('/',book_controller.index)
 
@@ -24,7 +26,7 @@ router.post('/book/:id/loan',bookInstance_controller.bookinstance_loan_post)
 
 router.get('/book/:id',book_controller.book_detail)
 //books list must come after create, so as not to look up an empty list
-router.get('/books',book_controller.book_list)
+router.get('/books',authentication.refreshAccessToken,book_controller.book_list)
 
 //authors
 router.get('/author/create', author_controller.author_create_get)

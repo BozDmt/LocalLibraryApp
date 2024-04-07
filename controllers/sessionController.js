@@ -1,9 +1,10 @@
 const jwt = require('jsonwebtoken')
-const mongoose = require('mongoose')
+// const mongoose = require('mongoose')
 const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
 const LibraryMember = require('../models/libmember')
 
+let refreshTokens = []
 
 exports.list = asyncHandler(async(req,res)=>{
     const users = await LibraryMember.find({}).exec()
@@ -27,13 +28,24 @@ exports.user_create_post = [
     })
 ]
 
-exports.login_post = (req,res)=>{
+exports.login_post = asyncHandler(async (req,res)=>{
     // const username = req.body.username
     const user = {name: req.body.username}
 
-    const accessToken = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET)
+    const accessToken = jwt.sign({username: user},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '10s'})
+    const refreshToken = jwt.sign({username: user},process.env.REFRESH_TOKEN_SECRET)
+    
+    refreshTokens.push(refreshToken)
 
-    res.cookie('jwt',accessToken,{httpOnly: true, maxAge: 24*60*60*1000})
+    res.cookie('jwt',accessToken,{httpOnly: true})
+    res.cookie('token',refreshToken,{httpOnly: true})
+    res.cookie('user',user,{httpOnly: true})
 
-    res.redirect('/login/users')
-}
+    res.redirect('/catalog')
+})
+
+exports.login_logout = asyncHandler(async(req,res)=>{
+    refreshTokens = refreshTokens.filter(token => token !== req.cookies.jwt)
+    res.cookies = null  
+    res.json(refreshTokens)
+})

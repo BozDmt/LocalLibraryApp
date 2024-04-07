@@ -25,6 +25,16 @@ app.use(
   })
 )
 
+function setNoCacheHeaders(req, res, next) {
+  // Set cache-control headers to prevent caching
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+}
+
+// Set no-cache headers
+app.use(setNoCacheHeaders);
 app.use('/wiki',wiki)
 app.use(logger('dev'));
 app.use(express.json());
@@ -46,7 +56,7 @@ app.use(function(req, res, next) {
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
