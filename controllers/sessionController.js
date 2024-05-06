@@ -33,12 +33,12 @@ exports.login_post = asyncHandler(async (req,res)=>{
     const user = {name: req.body.username}
 
     const accessToken = jwt.sign({username: user},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '10s'})
-    const refreshToken = jwt.sign({username: user},process.env.REFRESH_TOKEN_SECRET)
+    const refreshToken = jwt.sign({username: user},process.env.REFRESH_TOKEN_SECRET,{expiresIn: '10h'})
     
     refreshTokens.push(refreshToken)
 
-    res.cookie('jwt',accessToken,{httpOnly: true})
-    res.cookie('token',refreshToken,{httpOnly: true})
+    res.cookie('jwt',accessToken,{httpOnly: true, sameSite: 'strict'})
+    res.cookie('token',refreshToken,{httpOnly: true, sameSite: 'strict'})
     res.cookie('user',user,{httpOnly: true})
 
     res.redirect('/catalog')
