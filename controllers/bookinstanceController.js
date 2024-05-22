@@ -2,7 +2,9 @@ const BookInstance = require('../models/bookInstance')
 const asyncHandler = require('express-async-handler')
 const {body, validationResult} = require('express-validator')
 const Book = require('../models/book')
-
+const User = require('../models/user')
+const jwt = require('jsonwebtoken')
+const book = require('../models/book')
 exports.bookInstance_list = asyncHandler(async(req,res,next)=>{
     const allBookinstances = await BookInstance.find()
     .populate('book').exec()
@@ -95,7 +97,11 @@ exports.bookInstance_delete_get = asyncHandler(async(req,res)=>{
 })
 
 exports.bookInstance_delete_post = asyncHandler(async(req,res)=>{
-    await BookInstance.findByIdAndDelete(req.params.id).exec()
+    try {
+        await BookInstance.findByIdAndDelete(req.params.id).exec()
+    } catch (error) {
+        console.error(error)                
+    }
     res.redirect('/catalog/bookinstances')
 })
 
@@ -154,13 +160,52 @@ exports.bookInstance_update_post =[
 ]
 
 exports.bookinstance_loan_get = asyncHandler(async(req,res,next)=>{
-    // const bookinstance = BookInstance.findById(req.params.id).populate('book status').exec()
-    // res.render('bookinstance_loan',{
-    //     title: 'Loan book',
-    //     bookinstance: bookinstance,
-    // })
-    res.send('not implemented: book copy loan get')
+    const bookinstance = await BookInstance.findById(req.params.id).populate('book').exec()
+
+    res.render('bookinstance_loan',{book_instance: bookinstance})
 })
-exports.bookinstance_loan_post= asyncHandler(async(req,res,next)=>{
-    res.send('not implemented: book COPY loan post')
+
+exports.bookinstance_loan_post = [
+    asyncHandler(async(req,res,next)=>{
+        const token = jwt.decode(req.cookies.jwt,process.env.ACCESS_TOKEN_SECRET)
+        console.log(token)
+        const threeMonths = Date.now() + 7776000000
+        const bookinstance = await BookInstance.
+        findByIdAndUpdate(req.params.id,{
+            status: 'Loaned',
+            due_back: threeMonths,
+        })
+        const theUser = await User.findById(token.id)
+        theUser.books_loaned.push(bookinstance._id)
+        console.log(theUser)
+        const updatedUser = await User.findByIdAndUpdate(token.id,{books_loaned: theUser.books_loaned},{})
+        res.redirect(bookinstance.url)
+        // const returnDate = DateTime.fromMillis(today).toLocaleString(DateTime.DATE_MED)
+        // res.send(returnDate)
+        
+})]
+
+exports.bookinstance_return_get = asyncHandler(async(req,res)=>{
+    res.render('bookinstance_return')
 })
+
+exports.bookinstance_return_post = [
+    asyncHandler(async(req,res)=>{
+        const user = jwt.decode(req.cookies.jwt,process.env.ACCESS_TOKEN_SECRET)
+        
+        const userBooks = await User.find({_id: user.id},{books_loaned:1,_id: 0}).exec()
+        const bookInstance = await BookInstance.findByIdAndUpdate(req.params.id,{status: 'Available'}).exec()
+
+        const userBooksLoaned = []
+        for(const book of userBooks){
+            for(const record of book['books_loaned']){
+               if(record != req.params.id) 
+                userBooksLoaned.push(record)
+            }
+        }
+        
+        const newUser = await User.findByIdAndUpdate(user.id,{books_loaned:userBooksLoaned}).exec()
+        console.log(newUser)
+        res.redirect('/catalog')
+    })
+]

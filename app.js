@@ -6,6 +6,7 @@ const app = express();
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const crypto = require('node:crypto')
 
 const wiki = require('./routes/wiki')
 const indexRouter = require('./routes/index');
@@ -17,10 +18,21 @@ const loginRouter = require('./routes/login')
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+app.use((req,res,next)=>{
+  crypto.randomBytes(32,(err,randomBytes)=>{
+    if(err){
+      next(err)
+    }else{
+      res.locals.cspNonce = randomBytes.toString('hex')
+      next()
+    }
+  })
+})
+
 app.use(
   helmet.contentSecurityPolicy({
     directives:{
-      'script-src' : ["'self'","code.jquery.com","cdn.jsdelivr.net"],
+      'script-src' : ["'self'",(req,res)=>{`'nonce-${res.locals.cspNonce}'`},"code.jquery.com","cdn.jsdelivr.net"],
     },
   })
 )

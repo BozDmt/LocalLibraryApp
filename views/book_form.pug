@@ -52,9 +52,9 @@ block content
         div.form-group 
             label(for='book_cover') Book Cover
             p
-                img(src= value=(undefined===book?'':book.cover), width='248', height='248', alt='No book cover')
-            input#book_cover.form-control(type='file', name='book_cover')
-            input#cover_url.form-control(type='hidden', name='cover_url' value=(undefined===book? '':book.cover))
+                img(src= value=(undefined===book?'/bookCovers/bookIcon.jpg':book.cover), width='248', height='248', alt='No book cover')
+            input#book_cover.form-control(type='file',style='padding: .2rem .75rem;', name='book_cover')
+            input#cover_url.form-control(type='hidden', name='cover_url' value=(undefined===book? '/bookCovers/bookIcon.jpg':book.cover))
         button.btn.btn-primary(type='submit',style='width:100%;') Submit
     if errors
         ul

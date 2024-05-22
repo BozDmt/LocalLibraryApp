@@ -1,6 +1,10 @@
 extends layout 
 block append head 
   link(rel="stylesheet",href="/stylesheets/carousel.css")
+block append sidebar 
+  if undefined!==user_url
+    li(style='list-style-type:none;')
+      a(href='/login/'+user_url) My REAL profile niggaa
 block content 
   h1= title 
   p Welcome to #[em LocalLib], the place where you can find all of the books you've been searching for! 

@@ -20,10 +20,10 @@ block content
         div.form-group
             label(for='author_photo') Author photo 
             p
-                img(src= value=(undefined===author?'':author.photo), width='248', height='248', alt='No book cover')
-            input#author_photo.form-control(type='file', name='author_photo')
+                img(src= value=(undefined===author?'/authorPics/default_pic.jpeg':author.photo), width='248', height='248', alt='No author photo')
+            input#author_photo.form-control(type='file',style='padding: .2rem .75rem;', name='author_photo')
             input#photo_url.form-control(type='hidden', name='photo_url', 
-                value=(undefined===author? '/authorPics/default_profile_pic.jpg':author.photo))
+                value=(undefined===author? '/authorPics/default_pic.jpeg':author.photo))
         div.form-group
             button.btn.btn-primary(type='submit') Submit
 

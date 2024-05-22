@@ -1,7 +1,7 @@
 extends layout
 block sidebar
     p Not a user? 
-        a(href='/catalog') Create a profile
+        a(href='/login/user/create') Create a profile
 block content
     form(method='POST')
         div.form-group
@@ -13,3 +13,9 @@ block content
             input#password.form-control(type='password', name='password' required)
                     
         button.btn.btn-primary(type='submit') Log in
+    div(class='errorDiv')
+        p
+        if errors 
+            ul(style='list-style-type:none;')
+                each error in errors 
+                    li(style='color:red;')!=error.msg

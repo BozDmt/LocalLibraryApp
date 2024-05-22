@@ -25,9 +25,6 @@ block content
         a(href=book_detail.url+'/update') Update book
 
     hr
-    p 
-        a(href=book_detail.url+'/loan') Loan book
-    hr
 
     div(style='margin-left:20px;margin-top:20px')
         h4 Copies
@@ -44,5 +41,8 @@ block content
             p #[strong Due back:] #{val.due_back_formatted}
         p #[strong Id: ] 
             a(href=val.url) #{val._id}
+        if val.status === 'Available'
+            a(href=val.url+'/loan') Loan
+
     else
         p There are no copies of this book.

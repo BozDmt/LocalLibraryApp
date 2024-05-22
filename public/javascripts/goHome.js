@@ -1,3 +1,3 @@
-setTimeout(()=>{
+setTimeout((delay = 2000)=>{
     window.location.href='/catalog'
-},2000)
+},delay)

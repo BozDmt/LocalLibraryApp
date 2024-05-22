@@ -21,9 +21,6 @@ router.post('/book/:id/update',book_controller.book_update_post)
 router.get('/book/:id/delete',book_controller.book_delete_get)
 router.post('/book/:id/delete',book_controller.book_delete_post)
 
-router.get('/book/:id/loan', bookInstance_controller.bookinstance_loan_get)
-router.post('/book/:id/loan',bookInstance_controller.bookinstance_loan_post)
-
 router.get('/book/:id',book_controller.book_detail)
 //books list must come after create, so as not to look up an empty list
 router.get('/books',/*authentication.refreshAccessToken,*/book_controller.book_list)
@@ -50,6 +47,12 @@ router.post('/bookInstance/:id/update', bookInstance_controller.bookInstance_upd
 
 router.get( '/bookInstance/:id/delete', bookInstance_controller.bookInstance_delete_get)
 router.post('/bookInstance/:id/delete', bookInstance_controller.bookInstance_delete_post)
+
+router.get('/bookinstance/:id/loan', bookInstance_controller.bookinstance_loan_get)
+router.post('/bookinstance/:id/loan',bookInstance_controller.bookinstance_loan_post)
+
+router.get('/bookinstance/:id/return',bookInstance_controller.bookinstance_return_get)
+router.post('/bookinstance/:id/return',bookInstance_controller.bookinstance_return_post)
 
 router.get( '/bookInstance/:id', bookInstance_controller.bookInstance_detail)
 router.get('/bookInstances', bookInstance_controller.bookInstance_list)

@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler')
+const jwt = require('jsonwebtoken')
 const Book = require('../models/book')
 const Author = require('../models/author')
 const Genre = require('../models/genre')
@@ -17,8 +18,11 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({storage: storage})
-
+    
 exports.index = asyncHandler(async(req,res,next)=>{
+    const token = req.cookies.token
+    let userURL = ''
+
     const [
         numBooks,
         numAuthors,
@@ -33,6 +37,9 @@ exports.index = asyncHandler(async(req,res,next)=>{
         BookInstance.countDocuments({status: 'Available'}).exec()
     ])
 
+    userURL = await jwt.decode(req.cookies.jwt,process.env.ACCESS_TOKEN_SECRET)
+    console.log(userURL) 
+
     res.render('index',{
         title: 'LocalLib home page',
         book_count: numBooks,
@@ -40,6 +47,7 @@ exports.index = asyncHandler(async(req,res,next)=>{
         genre_count: numGenres,
         bookinstance_count: numBookInstances,
         avl_bookinstance_count: numAvailableBookInstances,
+        user_url:userURL.url
         //way to determine if there is a user, and which role he is
     })
 })
@@ -108,7 +116,7 @@ exports.book_create_post = [
 
     asyncHandler(async(req,res,next) =>{
         const errors = validationResult(req)
-        console.log(req.file)
+        // console.log(req.file)
         const book = new Book({
             title: req.body.title,
             author: req.body.authorName,
