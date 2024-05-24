@@ -1,3 +1,48 @@
-.carousel{
-    background-color: red;
+.container{
+    display: inline-flex;
+}
+
+.slider{
+    display: flex;
+    overflow-x: auto;
+    overflow: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    width: 260px;
+}
+
+.slider-wrapper{
+    position: relative;
+    margin:auto;
+}
+
+.slider img{
+    flex: 1 0 100%;
+    scroll-snap-align: start;
+    object-fit: cover;
+    height: 390px;
+    width: 260px;
+}
+
+.slider-nav{
+    display: flex;
+    column-gap: 1rem; 
+    position: absolute;
+    bottom: 1.25rem;
+    left: 30%;
+    transform: translateX(50%);
+    z-index: 1;
+}
+
+.slider-nav a{
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: #fff;
+    border-radius: 50%;
+    opacity: 0.75;
+    transition: opacity ease 500ms;
+}
+
+.slider-nav a:hover{
+    opacity: 1;
 }
