@@ -30,20 +30,13 @@ html(lang='en')
                 a(href='/catalog/genres') All genres
               li
                 a(href='/catalog/bookinstances') All book copies
-              //-create portion should be displayed only to admins
               hr
-              
-              li
-                a(href='/catalog/author/create') Create new author
-              li
-                a(href='/catalog/genre/create') Create new genre
-              li
-                a(href='/catalog/book/create') Create new book
-              li
-                a(href='/catalog/bookInstance/create') Create new book copy
-
-              hr
-
+              if(undefined !== user && user.role === '2')
+                li 
+                  p ADMIN
+              if(undefined !== user && user.role === '1')
+                li
+                  p USER
               li 
                 a(href='/login/user') My profile
               li 

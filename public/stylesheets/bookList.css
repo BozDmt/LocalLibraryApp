@@ -1,0 +1,97 @@
+section{
+    display: flex;
+    justify-content: space-between;
+    border: 5px ridge #bb8f00;
+    margin-bottom: 20px;
+    background-color: #ffdb5a;
+}
+
+section p{
+    border:20px solid #5a5aff;
+    background-color: #5a5aff;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    margin: 0;
+}
+
+section label{
+    align-self: center;
+    margin-bottom: .5rem;
+    margin-top: 0.5em;
+    margin-right: 20px;
+}
+
+#filterbtn{
+    border-radius: 35%;
+    background-color: #75ff7c;
+    color: black;
+    font-weight: bold;
+}
+
+#filterbtn:disabled{
+    border-radius: 35%;
+    background-color: #cecece;
+    color: black;
+    font-weight: bold;
+}
+
+#filterbtn:not(:disabled):hover{
+    background-color: #04880a;
+    transition: 100ms ease-in-out;
+}
+
+/* section p#test::before{
+    display: flex;
+    position: absolute; 
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-left: 20px;
+    width:20px;
+    height:20px;
+    background-color: #cecece;
+    border: 3px solid red;
+    content:'';
+}*/
+
+.book{
+    border: 2px solid #cecece;
+    border-radius: 5%;
+    padding: 10px 8px 10px 8px;
+    width: 270px;
+    /* height: min-content; */
+    /* margin-right: auto; */
+    word-wrap:break-word;
+    /* align-self: stretch; */
+}
+
+.book img{
+    border-radius: 5%;
+    width: 250px;
+    height: 250px;
+}
+
+.book:hover{
+    box-shadow: 0 0 5px 5px gray;
+    transition: 100ms ease-in-out;
+}
+
+.bookContainer{
+    display: grid;
+    row-gap: 15px;
+    column-gap: 6vmax;
+    grid-template-rows: fit-content fit-content fit-content fit-content;
+    grid-template-columns: 270px 270px 270px 270px;
+    padding: 1.5em;
+    /* display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: flex-start;
+    align-items: center; */
+}
+
+.filter_checkbox{
+    align-self: center;
+    width: 30px;
+    height: 30px;
+}

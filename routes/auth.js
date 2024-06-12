@@ -42,7 +42,6 @@ module.exports = function(app){
                     return res.sendStatus(401)
             }
             const newAccessToken = jwt.sign({username: user},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '10s'})
-            console.log(headers)
             res.status(200).send('jwt',newAccessToken,{httpOnly: true, sameSite: true})
             next()
         })})

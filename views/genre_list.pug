@@ -4,7 +4,7 @@ block content
     h1= title 
 
     if genre_list.length 
-        ul
+        ul.styled_list
             each genre in genre_list
                 li 
                     a(href=genre.url) #{genre.name}

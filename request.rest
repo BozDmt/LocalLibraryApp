@@ -1,5 +1,0 @@
-GET http://localhost:3500/login/users
-Cookie: jwt=eaJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdDEiLCJpYXQiOjE3MTE3MzgwNDh9.Sm37QElMY2yXvcDZVdkgxcND_NqGMxR2CjwuaKc5pFA
-###
-GET  http://localhost:3500/catalog
-Cookie: 

@@ -7,6 +7,7 @@ const BookInstance = require('../models/bookInstance')
 const {body, validationResult} = require('express-validator')
 const path = require('path')
 const multer = require('multer')
+const user = require('../models/user')
 const storage = multer.diskStorage({
     destination: function(req,file,cb){
         cb(null,'public/bookCovers')
@@ -34,11 +35,11 @@ exports.index = asyncHandler(async(req,res,next)=>{
         Author.countDocuments({}).exec(),
         Genre.countDocuments({}).exec(),
         BookInstance.countDocuments({}).exec(),
-        BookInstance.countDocuments({status: 'Available'}).exec()
+        BookInstance.countDocuments({status: 'Available'}).exec(),
+        // user.findkkk
     ])
 
-    userURL = await jwt.decode(req.cookies.jwt,process.env.ACCESS_TOKEN_SECRET)
-    console.log(userURL) 
+    // userURL = await jwt.decode(req.cookies.jwt,process.env.ACCESS_TOKEN_SECRET)
 
     res.render('index',{
         title: 'LocalLib home page',
@@ -53,12 +54,17 @@ exports.index = asyncHandler(async(req,res,next)=>{
 })
 
 exports.book_list = asyncHandler(async(req,res,next)=>{
-    const allBooks = await Book.find({},'title author cover')
+    const [allBooks,genres] = await Promise.all([Book.find({},'title author cover genre')
     .sort({title: 1})
     .populate('author')
-    .exec()
-
-    res.render('book_list', {title: 'Book List', book_list: allBooks})
+    .populate('genre.list')
+    .exec(),
+    Genre.find({}).exec()
+    ,])
+/**Gotta learn about data denormalization. When a book is created, store not only the genre ref, but the genre name
+ * in a separate field; the thing I'm trying to achieve is for relational databases.
+ */
+    res.render('book_list', {title: 'Book List', book_list: allBooks, genres:genres})
 })
 
 exports.book_detail = asyncHandler(async(req,res,next)=>{

@@ -86,14 +86,14 @@ exports.author_create_post = [
             last_name: req.body.last_name,
             date_of_birth: req.body.date_of_birth,
             date_of_death: req.body.date_of_death,
-            photo: req.file? '/authorPics' + path.basename(req.file.path):'/authorPics/default_profile_pic',
+            photo: req.file? '/authorPics/' + path.basename(req.file.path):'/authorPics/default_profile_pic',
         })
 
         if(!errors.isEmpty()){
             res.render('author_form',{
                 title: 'Create Author',
                 author: author,
-                errors: errors,
+                errors: errors.array(),
             })            
             return
         }

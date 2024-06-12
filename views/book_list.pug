@@ -1,14 +1,23 @@
 extends layout 
-
+block append head
+    script(src="/javascripts/bookList.js" defer) 
+    link(rel="stylesheet", href="/stylesheets/style.css")
 block content 
     h1= title 
+    section 
+        p Filters
+        each genre in genres 
+            input(type="radio", name=genre.id, class='filter_checkbox') 
+            label(for=genre.id) #{genre.name}
+        button(type='button', id='filterbtn' disabled) Apply filters
+
     if book_list.length 
-        ul(class='bookList')
+        div.Container
             each book in book_list 
-                li(class='bookListItem')
-                    img(src=book.cover || '/images/bookIcon.jpg', width='248', height='248')
-                    br
-                    a(href=book.url) #{book.title}
-                    |   -   #{book.author.name}
+                div.Item(name=book.genre) 
+                    a(href=book.url)
+                        img(src=book.cover || '/images/bookIcon.jpg', alt="Book Cover")
+                        |   #{book.title}
+                        |   -   #{book.author.name}
     else 
         p There are no books at the moment.

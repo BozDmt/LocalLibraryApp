@@ -16,20 +16,20 @@ const asyncHandler = require('express-async-handler')
 //     })
 // }
 exports.verifyToken = asyncHandler(async (req,res,next)=>{
-    const username = req.cookies.user
+    // const username = req.cookies.user
     
-    const token = req.cookies.token? req.cookies.token: null
+    // const token = req.cookies.token? req.cookies.token: null
         
-    if(!token) 
-        return res.redirect('/login')
-    else
-        jwt.verify(token,process.env.REFRESH_TOKEN_SECRET,function(err){
-            if(err)
-                res.send('No token')
-        })
+    // if(!token) 
+    //     return res.redirect('/login')
+    // else
+    //     jwt.verify(token,process.env.REFRESH_TOKEN_SECRET,function(err){
+    //         if(err)
+    //             res.send('No token')
+    //     })
     
-    const newAccessToken = jwt.sign({username: username},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '10s'})
-    res.cookie('jwt',newAccessToken,{httpOnly: true, sameSite: 'strict'})
+    // const newAccessToken = jwt.sign({username: username},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '10s'})
+    // res.cookie('jwt',newAccessToken,{httpOnly: true, sameSite: 'strict'})
     
     next()
     

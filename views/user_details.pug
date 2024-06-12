@@ -1,7 +1,18 @@
 extends layout 
-
+block append sidebar 
+    if(user.role === '2')
+        hr
+        ul.sidebar-nav
+            li
+                a(href='/catalog/author/create') Create new author
+            li
+                a(href='/catalog/genre/create') Create new genre
+            li
+                a(href='/catalog/book/create') Create new book
+            li
+                a(href='/catalog/bookInstance/create') Create new book copy
 block content 
-    h2 #{username}
+    h2 #{user.username}
     p Books loaned: 
     hr
     ul

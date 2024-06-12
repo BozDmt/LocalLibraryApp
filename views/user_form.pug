@@ -9,6 +9,11 @@ block content
             input#username.form-control(type='text',name='username' required)
             label(for='password') Password: 
             input#password.form-control(type='password',name='password',placeholder='123#@!AbC',minlength='8' required )
+            label(for='role') Select user type 
+            select#role.form-control(name='role' required)
+                option(value="1") User 
+                option(value="2") Admin
+
         button.btn.btn-primary(type='submit') Submit
     if errors
         ul

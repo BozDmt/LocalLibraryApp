@@ -1,28 +1,30 @@
 extends layout 
 
 block content
-
-    h1 #{book_detail.title}
-    p 
-        img(src=book_detail.cover || '/images/bookIcon.jpg', width='248', height='248', alt='No book image')
+    div(class='book_title')    
+        h1 #{book_detail.title}
+    div(class='book_cover')        
+        p
+            img(src=book_detail.cover || '/images/bookIcon.jpg', width='320', height='320', alt='No book image', class='book_image')
     
-    p #[strong Author: ] 
-        a(href=book_detail.author.url) #{book_detail.author.name}
-    p #[strong Genre: ]   
-        each val, index in book_detail.genre
-            a(href=val.url) #{val.name}
-            if index < book_detail.genre.length - 1
-                |,&nbsp;                
-    p #[strong Summary: ] #{book_detail.summary}
+    div(class='book_details')
+        p #[strong Author: ] 
+            a(href=book_detail.author.url) #{book_detail.author.name}
+        p #[strong Genre: ]   
+            each val, index in book_detail.genre
+                a(href=val.url) #{val.name}
+                if index < book_detail.genre.length - 1
+                    |,&nbsp;                
+        p(class='summary') #[strong Summary: ] #{book_detail.summary}
     p #[strong ISBN: ] #{book_detail.isbn}
 
     hr 
 
     p 
-        a(href=book_detail.url+'/delete') Delete book
-    hr
-    p
-        a(href=book_detail.url+'/update') Update book
+        a(href=book_detail.url+'/delete', class='btn btn-primary') Delete book
+    
+    p 
+        a(href=book_detail.url+'/update', class='btn btn-primary') Update book
 
     hr
 
@@ -42,7 +44,7 @@ block content
         p #[strong Id: ] 
             a(href=val.url) #{val._id}
         if val.status === 'Available'
-            a(href=val.url+'/loan') Loan
+            a(href=val.url+'/loan', class='btn btn-primary') Loan
 
     else
         p There are no copies of this book.
