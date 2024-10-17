@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const paginate = require('express-paginate')
 const createError = require('http-errors');
 const helmet = require('helmet')
 const express = require('express');
@@ -35,6 +36,7 @@ function setNoCacheHeaders(req, res, next) {
 }
 
 // Set no-cache headers
+app.use(paginate.middleware(9,50))
 app.use(setNoCacheHeaders);
 app.use('/wiki',wiki)
 app.use(logger('dev'));

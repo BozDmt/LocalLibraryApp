@@ -12,12 +12,24 @@ block content
         button(type='button', id='filterbtn' disabled) Apply filters
 
     if book_list.length 
-        div.Container
+        div.container
             each book in book_list 
-                div.Item(name=book.genre) 
+                div.item.booklink(name=book.genre)
                     a(href=book.url)
                         img(src=book.cover || '/images/bookIcon.jpg', alt="Book Cover")
-                        |   #{book.title}
-                        |   -   #{book.author.name}
+                        |   #{book.author.name}
+                        |   - #{book.title}
+    if pages 
+        div.pagnav
+            if paginate.hasPreviousPages    
+                a(href=paginate.href(true))
+                    i.pag-nav
+                        | Previous&nbsp;
+            each page in pages  
+                a.btn.btn-primary(href=page.url)= page.number
+            if paginate.hasNextPages(pageCount)
+                a(href=paginate.href())
+                    i.pag-nav
+                        | Next&nbsp;
     else 
         p There are no books at the moment.

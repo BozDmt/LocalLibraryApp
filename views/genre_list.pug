@@ -4,9 +4,10 @@ block content
     h1= title 
 
     if genre_list.length 
-        ul.styled_list
+        ul.styled-list
             each genre in genre_list
-                li 
+                li.lian 
                     a(href=genre.url) #{genre.name}
     else 
         p No available genres at the moment.
+    script(src="/javascripts/animatedList.js" defer) 

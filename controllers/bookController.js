@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler')
+const paginate = require('express-paginate')
 const jwt = require('jsonwebtoken')
 const Book = require('../models/book')
 const Author = require('../models/author')
@@ -36,7 +37,6 @@ exports.index = asyncHandler(async(req,res,next)=>{
         Genre.countDocuments({}).exec(),
         BookInstance.countDocuments({}).exec(),
         BookInstance.countDocuments({status: 'Available'}).exec(),
-        // user.findkkk
     ])
 
     // userURL = await jwt.decode(req.cookies.jwt,process.env.ACCESS_TOKEN_SECRET)
@@ -54,17 +54,33 @@ exports.index = asyncHandler(async(req,res,next)=>{
 })
 
 exports.book_list = asyncHandler(async(req,res,next)=>{
-    const [allBooks,genres] = await Promise.all([Book.find({},'title author cover genre')
+    const [allBooks,genres,bookCount] = await Promise.all([Book.find({},'title author cover genre')
     .sort({title: 1})
     .populate('author')
     .populate('genre.list')
+    .skip(req.skip)
+    .limit(req.query.limit)
     .exec(),
     Genre.find({}).exec()
-    ,])
+    ,Book.countDocuments({},null)])
+
+    const pageCount = Math.ceil(bookCount / req.query.limit)
+    
 /**Gotta learn about data denormalization. When a book is created, store not only the genre ref, but the genre name
  * in a separate field; the thing I'm trying to achieve is for relational databases.
  */
-    res.render('book_list', {title: 'Book List', book_list: allBooks, genres:genres})
+    try{
+    res.render('book_list', 
+        {
+            title: 'Book List', 
+            book_list: allBooks, 
+            pageCount: pageCount,
+            genres:genres,
+            pages: paginate.getArrayPages(req)(10,pageCount,req.query.page)
+        }
+    )}catch(e){
+        console.log(e.msg)
+    }
 })
 
 exports.book_detail = asyncHandler(async(req,res,next)=>{

@@ -14,22 +14,23 @@ block content
       .slider-wrapper
         .slider
           each val, idx in urls
-            img(id=idx, src=val, alt="Book cover")
-        .slider-nav
-          each val, idx in urls
-            a(href=`#${idx}`)
+            img(id=`b${idx}`, src=val, alt="Book cover")
+        //- .slider-nav
+        //-   each val, idx in urls
+        //-     a(href=`#${idx}`)
       .slider-wrapper
         .slider
           each val, idx in aUrls
-            img(id=`a${idx}`, src=val, alt="Book cover")
-        .slider-nav
-          each val, idx in aUrls
-            a(href=`#a${idx}`)
+            img(id=`a${idx}`, src=val, alt="Author cover")
+        //- .slider-nav
+        //-   each val, idx in aUrls
+        //-     a(href=`#a${idx}`)
   h1 Dynamic count of records: 
 
-  ul.styled_list 
-    li #[strong Books:] !{book_count}
-    li #[strong Authors:] !{author_count}
-    li #[strong Genres:] !{genre_count}
-    li #[strong Copies:] !{bookinstance_count}
-    li #[strong Copies available:] !{avl_bookinstance_count}
+  ul.styled-list 
+    li.lian #[strong Books:] !{book_count}
+    li.lian #[strong Authors:] !{author_count}
+    li.lian #[strong Genres:] !{genre_count}
+    li.lian #[strong Copies:] !{bookinstance_count}
+    li.lian #[strong Copies available:] !{avl_bookinstance_count}
+  script(src="/javascripts/animatedList.js" defer) 

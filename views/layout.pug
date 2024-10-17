@@ -13,6 +13,7 @@ html(lang='en')
       script(src='https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js'
       , integrity='sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+'
       ,crossorigin='anonymous')
+      script(src="/javascripts/animateSidebar.js" defer) 
       link(rel='stylesheet', href='/stylesheets/style.css')
   body 
     div(class='container-fluid')
@@ -20,15 +21,15 @@ html(lang='en')
         div(class='col-sm-2')
           block sidebar
             ul(class='sidebar-nav')
-              li
+              li.animated
                 a(href='/catalog') Home
-              li
+              li.animated
                 a(href='/catalog/books') All books
-              li
+              li.animated
                 a(href='/catalog/authors') All authors
-              li
+              li.animated
                 a(href='/catalog/genres') All genres
-              li
+              li.animated
                 a(href='/catalog/bookinstances') All book copies
               hr
               if(undefined !== user && user.role === '2')
@@ -37,9 +38,9 @@ html(lang='en')
               if(undefined !== user && user.role === '1')
                 li
                   p USER
-              li 
+              li.animated
                 a(href='/login/user') My profile
-              li 
+              li.animated
                 a(href='/login/logout') Sign out
         div(class='col-sm-10')
           block content

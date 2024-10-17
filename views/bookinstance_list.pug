@@ -1,11 +1,12 @@
 extends layout 
 
 block content
+    script(src="/javascripts/animatedList.js" defer) 
     h1= title 
     if bookinstance_list.length 
-        ul.styled_list_bookinstance
+        ul.styled-list.bookinstance
             each bookinstance in bookinstance_list 
-                li 
+                li.lian 
                     a(href=bookinstance.url) #{bookinstance.book.title} : #{bookinstance.imprint} -&nbsp;
                     if bookinstance.status=='Available'
                         span.text-success #{bookinstance.status}
@@ -15,5 +16,17 @@ block content
                         span.text-warning #{bookinstance.status}
                     if bookinstance.status!='Available' && bookinstance.status!='Reserved'
                         span    (Due: #{bookinstance.due_back_formatted})
+    if pages 
+        div.pagnav
+    if paginate.hasPreviousPages    
+        a(href=paginate.href(true))
+            i.pag-nav
+                | Previous&nbsp;
+    each page in pages  
+        a.btn.btn-primary(href=page.url)= page.number
+    if paginate.hasNextPages(pageCount)
+        a(href=paginate.href())
+            i.pag-nav
+                | Next&nbsp;
     else 
         p No book copies at the moment.

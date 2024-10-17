@@ -4,9 +4,9 @@ block content
     h1= title
 
     if author_list.length 
-        div.Container
+        div.container
             each author in author_list 
-                div.Item
+                div.item
                     a(href=author.url)
                         img(src=author.photo || "/public/authorPics/default_pic.jpeg", alt="/public/authorPics/default_pic.jpeg")
                         | #{author.name}

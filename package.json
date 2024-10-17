@@ -1,7 +1,7 @@
 {
   "name": "locallibraryapp",
   "version": "0.0.0",
-  "private": true,
+  "private": false,
   "scripts": {
     "start": "node ./bin/www",
     "devstart": "nodemon .bin/www",
@@ -32,7 +32,7 @@
     "socket.io": "^4.7.5"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0",
+    "nodemon": "^3.1.7",
     "pug": "^3.0.2"
   }
 }

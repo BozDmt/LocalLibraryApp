@@ -1,17 +1,24 @@
 const BookInstance = require('../models/bookInstance')
+const paginate = require('express-paginate')
 const asyncHandler = require('express-async-handler')
 const {body, validationResult} = require('express-validator')
 const Book = require('../models/book')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const book = require('../models/book')
+
 exports.bookInstance_list = asyncHandler(async(req,res,next)=>{
-    const allBookinstances = await BookInstance.find()
-    .populate('book').exec()
-    
+    const [allBookinstances, bookCount] = await Promise.all([BookInstance.find()
+    .populate('book').skip(req.query.skip).limit(req.query.limit).exec(),
+    BookInstance.countDocuments({},null)
+])
+    const pageCount = Math.ceil(bookCount / req.query.limit)
+
     res.render('bookinstance_list',{
         title: 'List of book copies',
         bookinstance_list: allBookinstances,
+        pageCount:pageCount,
+        pages: paginate.getArrayPages(req)(9,pageCount,req.query.page)
     })
 })
 
