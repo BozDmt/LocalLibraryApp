@@ -23,6 +23,11 @@ header{
   left:0;
 }
 
+.underline{
+  text-decoration: underline;
+  text-underline-offset: .1em;
+}
+
 header .header-div{
   display: flex;
   flex:1;
@@ -133,7 +138,7 @@ p{
   color: #00B7FF;
   border: 2px solid white;
   margin: 5px;
-  border-radius: 15px;
+  border-radius: 50px;
   padding: 5px;
   background-color: #ffdb5a;
   width: 100%;
@@ -149,6 +154,11 @@ p{
   margin-top: 20px;
   padding: 0;
   list-style: none;
+}
+
+#signup a{
+  background-color: #e37900;
+  color:black;
 }
 
 .item img{
@@ -201,8 +211,8 @@ a, a:hover{
   display: flex;
   justify-content: center;
   font-size: 24px;
-  /* border: 2px solid #cecece; */
-  background-color: var(--button-frame-color);
+  border: 2px solid #cecece;
+  /* background-color: var(--button-frame-color); */
   /* border-radius: 5%; */
   transition: transform 0.5s, opacity 0.5s;
   white-space: nowrap;
@@ -297,16 +307,12 @@ section label{
 
 .container{
   display: grid;
-  min-height: 100vh;
   gap:1rem;
   grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
   padding: 1.5em 0;
-  justify-items: center;
-  /* display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: flex-start;
-  align-items: center; */
+  place-items: center;
+  /* justify-items: center; */
+  width: 100%;
 }
 
 .filter_checkbox{
@@ -344,10 +350,14 @@ h1{
   margin-top: 1em;
   padding: 0;
   padding-inline-start: 0;
+  flex: 0 0 87.5%;
+  max-width: 87.5%;
 }
 
 .col-sm-2{
   padding-left: 0;  
+  flex: 0 0 12.5%;
+  max-width:12.5%;
 }
 
 .styled-list.bookinstance{
@@ -378,7 +388,33 @@ h1{
   display: none;
 }
 
-.pag-nav{
+.pagenum{
+  position:relative;
+  display: flex;
+  align-items: center;
+}
+
+.pagenum a.page-nav{
+  position:absolute;
+  border:2px solid gainsboro;
+  width: 5em;
+  text-align: center;
+  border-radius:5px;
+  color: #5a5aff;
+  padding:.4em;
+}
+
+.pagenum a.page-nav:first-of-type{
+  right:100%;
+  margin-right:.1em;
+}
+
+.pagenum a.page-nav:last-of-type{
+  left:100%;
+  margin-left:.1em;
+}
+
+.page-nav{
   border-radius:5px;
   color:#5a5aff;
   font-weight: 400;
@@ -386,19 +422,18 @@ h1{
   padding:.4em;
 }
 
-.pagnav{
+.pagenav{
   /* position: absolute; */
   width:100%;
-  text-align: center;
+  /* text-align: center; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.pagnav .btn.btn-primary{
+.pagenav .btn.btn-primary{
   vertical-align:baseline;
   border:1px solid gainsboro; 
-}
-
-.pagnav .btn.btn-primary:not(:nth-child(7)){
-  margin-right: .1em;
 }
 
 p.booklink{
@@ -422,10 +457,16 @@ button.mobile-dropdown-toggle{
 
 .profile{
   display: flex;
+  flex-wrap:wrap
+}
+
+.profileinfo{
+  flex:1;
+  margin-left:2em;
 }
 
 .profilebooks{
-  flex:1;
+  flex:0;
   text-align: center;
 }
 
@@ -438,9 +479,6 @@ button.mobile-dropdown-toggle{
  
     ul{
       padding-inline-start:0;
-    }
-    i{
-      font-size: 2em;
     }
     .lnr-menu:before {
       content: "\e871";
@@ -461,6 +499,49 @@ button.mobile-dropdown-toggle{
       font-size: 3em;
       position: relative;
       z-index: -1;
+    }
+
+    #ul-dropdown{
+      position: fixed;
+      display: block;
+      padding:4em 1em 1em 1em;
+      line-height: 2em;
+      list-style: none;
+      left:0;
+      top:0;
+      width:10em;
+      background-color: #e1c14e;
+      z-index:998;
+      overflow-y:auto;
+    }
+
+    .menu-active{
+      animation-name: slidein;
+      animation-duration: .5s;
+    }
+
+    .menu-inactive{
+      animation-name: slideout;
+      animation-duration: .5s;
+    }
+
+    @keyframes slidein{
+      from{
+        transform: translateX(-100%);
+      }
+
+      to{
+        transform:translateX(0%);
+      }
+    }
+
+    @keyframes slideout{
+      from{
+        transform:translateX(0%);
+      }
+      to{
+        transform: translateX(-100%);
+      }
     }
 }
 

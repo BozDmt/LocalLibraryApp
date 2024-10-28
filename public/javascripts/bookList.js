@@ -1,95 +1,87 @@
-const doc = document.getElementsByClassName('Item')
-const radios = document.getElementsByTagName('input')
-const btn = document.getElementById('filterbtn')
-const section = document.querySelector('section')
-const bookContainer = document.querySelectorAll('.Container')
+(function(){
+    const doc = document.getElementsByClassName('item')
+    const radios = document.getElementsByTagName('input')
+    const btn = document.getElementById('filterbtn')
+    const section = document.querySelector('section')
+    const bookContainer = document.querySelectorAll('.container')
+    const pageUrl = window.location.toString().split('=')//.reduce()
 
-section.addEventListener('click', (event) => {
-    if(event.target.tagName == 'INPUT'){
-        let j = 0
-        for(let i = 0; i < radios.length; i++){
-            if(radios[i].checked === true){
-                j++
+    Promise.all([fetch('/catalog/genres/ids'),fetch('catalog/books/')])
+    .then((result)=>result.json())
+    .then((data)=>{
+        
+        const genre_ids = []
+        
+        
+        data[0].entries().forEach(([key,val]) => {
+            genre_ids.push(val._id)
+        })
+
+        section.addEventListener('click', (event) => {
+            if(event.target.tagName == 'INPUT'){
+                let j = 0
+                for(let i = 0; i < radios.length; i++){
+                    if(radios[i].checked === true){
+                        j++
+                    }
+                }
+        
+                if(event.target.defaultChecked == true){
+                    event.target.defaultChecked = false
+                    event.target.checked = false    
+                    j--
+                }else if(event.target.defaultChecked == false){
+                    event.target.defaultChecked = true
+                    event.target.checked = true
+                }
+        
+                if(j == radios.length || j == 0){
+                    btn.disabled = true
+                }else{
+                    btn.disabled = false
+                }
             }
-        }
-
-        if(event.target.defaultChecked == true){
-            event.target.defaultChecked = false
-            event.target.checked = false    
-            j--
-        }else if(event.target.defaultChecked == false){
-            event.target.defaultChecked = true
-            event.target.checked = true
-        }
-
-        if(j == radios.length || j == 0){
-            btn.disabled = true
-        }else{
-            btn.disabled = false
-        }
-    }
-})
-
-btn.addEventListener('click',()=>{
-    for(let i = 0; i < doc.length; i++){
-        for(const genre of doc[i].getAttribute('name').split('"')){
-                switch(genre){
-                    case '65f09fbb286d37f512aac98b':{
+        })
+        
+        btn.addEventListener('click',()=>{
+            for(let i = 0; i < doc.length; i++){
+                for(const genre in genre_ids){
+                        if(doc[i])
                         if(radios[0].checked){
                             doc[i].classList.add('visible')
                         }else{
                             doc[i].classList.remove('visible')
                         }
-                        break
-                    }
-                    case '65f09fbb286d37f512aac98a':{
-                        if(radios[2].checked){
-                            doc[i].classList.add('visible')
-                        }else{
-                            doc[i].classList.remove('visible')
-                        }
-                        break
-                    }
-                    case '65f09fbb286d37f512aac98c':{
-                        if(radios[1].checked){
-                            doc[i].classList.add('visible')
-                        }else{
-                            doc[i].classList.remove('visible')
-                        }
-                        break
-                    }
-                    case '65f1f8e60592381652208db6':{
-                        if(radios[3].checked){
-                            doc[i].classList.add('visible')
-                        }else{
-                            doc[i].classList.remove('visible')
-                        }
-                        break
-                    }
-                    case '65facb41f7de2fa5a9f34728':{
-                        if(radios[4].checked){
-                            doc[i].classList.add('visible')
-                        }else{
-                            doc[i].classList.remove('visible')
-                        }
-                        break
-                    }
-                    default:{
-                        // const a = 1
-                    }
+                    }    
                 }
-            }    
+            })
+            
+        function showItems(collection,opt){
+            if(opt == 1)
+                for(let i = 0; i < collection.length; i++){
+                    collection.classList.add('hide')
+                }
+            else{
+                for(let i = 0; i < collection.length; i++){
+                    collection.classList.remove('hide')
+                }
+            }
         }
     })
-    
-function showItems(collection,opt){
-    if(opt == 1)
-        for(let i = 0; i < collection.length; i++){
-            collection.classList.add('hide')
-        }
-    else{
-        for(let i = 0; i < collection.length; i++){
-            collection.classList.remove('hide')
-        }
-    }
-}
+    .catch((e)=>{console.error(e)})
+    })()
+
+
+    // const urls = [
+    //     '/catalog/genres/ids1',
+    //     '/catalog/genres/ids2',
+    //     '/catalog/genres/ids3'
+    //   ];
+      
+    //   Promise.all(urls.map(url => fetch(url).then(res => res.json())))
+    //     .then(results => {
+    //       console.log(results); // Array of results in the same order as URLs
+    //       // You can now access results[0], results[1], etc., or process them all together
+    //     })
+    //     .catch(error => console.error('Error fetching data:', error));
+      

@@ -9,7 +9,6 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const crypto = require('node:crypto')
 const cors = require('cors')
-const wiki = require('./routes/wiki')
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const profilesRouter = require('./routes/profiles')
@@ -37,9 +36,8 @@ function setNoCacheHeaders(req, res, next) {
 }
 
 // Set no-cache headers
-app.use(paginate.middleware(9,50))
+app.use(paginate.middleware(3,50))
 app.use(setNoCacheHeaders);
-app.use('/wiki',wiki)
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -71,7 +69,7 @@ app.use(function(err, req, res) {
 });
 
 mongoose.set('strictQuery', false)
-const mongoConnection = 'mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.1.5'
+const mongoConnection = 'mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.2'
 
 main().catch((err) => console.log(err))
 async function main(){

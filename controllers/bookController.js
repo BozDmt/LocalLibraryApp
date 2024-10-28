@@ -1,4 +1,3 @@
-const asyncHandler = require('express-async-handler')
 const paginate = require('express-paginate')
 const jwt = require('jsonwebtoken')
 const Book = require('../models/book')
@@ -21,40 +20,43 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage})
     
-exports.index = asyncHandler(async(req,res,next)=>{
+exports.index = (req,res,next)=>{
     const token = req.cookies.token
     let userURL = ''
 
-    const [
-        numBooks,
-        numAuthors,
-        numGenres,
-        numBookInstances,
-        numAvailableBookInstances
-    ] = await Promise.all([
+    Promise.all([
         Book.countDocuments({}).exec(),
         Author.countDocuments({}).exec(),
         Genre.countDocuments({}).exec(),
         BookInstance.countDocuments({}).exec(),
         BookInstance.countDocuments({status: 'Available'}).exec(),
     ])
+    .then((data)=>{
+        const [
+            numBooks,
+            numAuthors,
+            numGenres,
+            numBookInstances,
+            numAvailableBookInstances
+        ] = data
+
+        res.render('index',{
+            book_count: numBooks,
+            author_count: numAuthors,
+            genre_count: numGenres,
+            bookinstance_count: numBookInstances,
+            avl_bookinstance_count: numAvailableBookInstances,
+            user_url:userURL.url
+            //way to determine if there is a user, and which role he is
+        })
+    })
 
     // userURL = await jwt.decode(req.cookies.jwt,process.env.ACCESS_TOKEN_SECRET)
 
-    res.render('index',{
-        title: 'LocalLib home page',
-        book_count: numBooks,
-        author_count: numAuthors,
-        genre_count: numGenres,
-        bookinstance_count: numBookInstances,
-        avl_bookinstance_count: numAvailableBookInstances,
-        user_url:userURL.url
-        //way to determine if there is a user, and which role he is
-    })
-})
+}
 
-exports.book_list = asyncHandler(async(req,res,next)=>{
-    const [allBooks,genres,bookCount] = await Promise.all([Book.find({},'title author cover genre')
+exports.book_list = (req,res,next)=>{
+    Promise.all([Book.find({},'title author cover genre')
     .sort({title: 1})
     .populate('author')
     .populate('genre.list')
@@ -63,53 +65,62 @@ exports.book_list = asyncHandler(async(req,res,next)=>{
     .exec(),
     Genre.find({}).exec()
     ,Book.countDocuments({},null)])
+    .then((data)=>{
+        const [allBooks,genres,bookCount] = data
+        const pageCount = Math.ceil(bookCount / req.query.limit)
 
-    const pageCount = Math.ceil(bookCount / req.query.limit)
+        res.render('book_list', 
+            {
+                title: 'Book List', 
+                book_list: allBooks, 
+                pageCount: pageCount,
+                genres:genres,
+                pages: paginate.getArrayPages(req)(10,pageCount,req.query.page)
+            }
+        )
+    })
+
     
 /**Gotta learn about data denormalization. When a book is created, store not only the genre ref, but the genre name
  * in a separate field; the thing I'm trying to achieve is for relational databases.
  */
-    try{
-    res.render('book_list', 
-        {
-            title: 'Book List', 
-            book_list: allBooks, 
-            pageCount: pageCount,
-            genres:genres,
-            pages: paginate.getArrayPages(req)(10,pageCount,req.query.page)
-        }
-    )}catch(e){
-        console.log(e.msg)
-    }
-})
+}
 
-exports.book_detail = asyncHandler(async(req,res,next)=>{
-    const [bookDetails,bookinstance] = await Promise.all([
+exports.book_detail = (req,res,next)=>{
+    Promise.all([
         Book.findById(req.params.id).populate('author').populate('genre').exec(),
         BookInstance.find({book: req.params.id}).exec(),
     ])
+    .then((data)=>{
+        const [bookDetails,bookinstance] = data
+
+        if(bookDetails === null){
+            const err = new Error('Book not found')
+            err.status = 404
+            return next(err)
+        }
     
-    if(bookDetails === null){
-        const err = new Error('Book not found')
-        err.status = 404
-        return next(err)
-    }
-
-    res.render('book_details', {
-        book_title: bookDetails.title, 
-        book_detail: bookDetails, 
-        book_instance: bookinstance
+        res.render('book_details', {
+            book_title: bookDetails.title, 
+            book_detail: bookDetails, 
+            book_instance: bookinstance
+        })
     })
-})
+    
+}
 
-exports.book_create_get = asyncHandler(async(req,res,next)=>{
-    const [allAuthors,allGenres] = await Promise.all([
+exports.book_create_get = (req,res,next)=>{
+    Promise.all([
         Author.find().sort({last_name: 1}).exec(),
         Genre.find().sort({name: 1}).exec()
     ])
+    .then((data)=>{
+        const [allAuthors,allGenres] = data
 
-    res.render('book_form',{title:'Create Book',authors: allAuthors, genres: allGenres})
-})
+        res.render('book_form',{title:'Create Book',authors: allAuthors, genres: allGenres})
+    })
+
+}
 
 exports.book_create_post = [
     (req,res,next) => {
@@ -122,9 +133,9 @@ exports.book_create_post = [
     body('authorName')
     ,body('title')
     .trim()
-    // .isLength({min: 3})
+    .isLength({max:40})
     .blacklist('<>')
-    // .withMessage('Title must be specified')
+    .withMessage('Title must be specified')
     ,body('summary','Summary must be provided')
     .trim()
     .blacklist('<>')
@@ -136,9 +147,9 @@ exports.book_create_post = [
     
     upload.single('book_cover'),
 
-    asyncHandler(async(req,res,next) =>{
+    (req,res,next) =>{
         const errors = validationResult(req)
-        // console.log(req.file)
+        
         const book = new Book({
             title: req.body.title,
             author: req.body.authorName,
@@ -149,98 +160,114 @@ exports.book_create_post = [
         })
 
         if(!errors.isEmpty()){
-            const [allAuthors,allGenres] = await Promise.all([
+            Promise.all([
                 Author.find().sort({last_name: 1}).exec(),
                 Genre.find().sort({name: 1}).exec()
             ])
+            .then((data)=>{
+                const [allAuthors,allGenres] = data
 
-            for(genre of allGenres){
-                if(book.genre.includes(genre._id)){
-                    genre.checked = 'true'
+                for(genre of allGenres){
+                    if(book.genre.includes(genre._id)){
+                        genre.checked = 'true'
+                    }
                 }
-            }
-
-            res.render('book_form',{
-                title: 'Create Book',
-                authors: allAuthors,
-                genres: allGenres,
-                book:book,
-                errors: errors.array(),
+                res.render('book_form',{
+                    title: 'Create Book',
+                    authors: allAuthors,
+                    genres: allGenres,
+                    book:book,
+                    errors: errors.array(),
+                })
             })
-            return
         }
         else{
-            const bookExists = await Book.find({title: req.body.title}).exec()
-        
-            if(bookExists === null || bookExists === undefined){
-                res.send(`Book '${bookExists}' exists`)
-            }
-            else{
-                await book.save()
-                res.redirect(book.url)
-            }
-        }
-    })]
+            Book.find({title: req.body.title}).exec()
+            .then((exists)=>{
+                const bookExists = exists
 
-    exports.book_delete_get = asyncHandler(async(req,res,next)=>{
-        const [book, bookCopies] = await Promise.all([
+                if(bookExists === null || bookExists === undefined){
+                    res.send(`Book '${bookExists}' exists`)
+                }
+                else{
+                    book.save()
+                    // res.setHeader('Cookie',`${book.title}`)apparently headers are sent now
+                    res.redirect(book.url)
+                }
+            })
+        }
+    }]
+
+    exports.book_delete_get = (req,res,next)=>{
+        Promise.all([
             Book.findById(req.params.id).exec(),
             BookInstance.find({book: req.params.id},'book imprint status due_back'),
         ])
-
-        res.render('book_delete', {
-            title: 'Delete book',
-            book:book,
-            copies: bookCopies,
+        .then((data)=>{
+            const [book, bookCopies] = data
+            
+            res.render('book_delete', {
+                title: 'Delete book',
+                book:book,
+                copies: bookCopies,
+            })
         })
-})
 
-exports.book_delete_post = asyncHandler(async(req,res,next)=>{
-    const [book, bookCopies] = await Promise.all([
+}
+
+exports.book_delete_post = (req,res,next)=>{
+    Promise.all([
         Book.findById(req.params.id).exec(),
         BookInstance.find({book: req.params.id},'book imprint status due_back'),
     ])
+    .then((data)=>{
+        const [book, bookCopies] = data
 
-    if(bookCopies.length > 0){
-        res.render('book_delete', {
-            title: 'Delete book',
-            book:book,
-            copies: bookCopies,
-        })
-        return
-    }
-    else{
-        Book.findByIdAndDelete(req.body.bookid).exec()
-        res.redirect('/catalog/books')
-    }
-})
+        if(bookCopies.length > 0){
+            res.render('book_delete', {
+                title: 'Delete book',
+                book:book,
+                copies: bookCopies,
+            })
+            
+        }
+        else{
+            Book.findByIdAndDelete(req.body.bookid).exec()
+            res.redirect('/catalog/books')
+        }
+    })
+}
 
-exports.book_update_get = asyncHandler(async(req,res,next)=>{
-    const [book,allAuthors,allGenres] = await Promise.all([
+exports.book_update_get = (req,res,next)=>{
+    Promise.all([
         Book.findById(req.params.id).exec(),
         Author.find({}).sort({last_name: 1}).exec(),
         Genre.find({}).sort({name: 1}).exec(),
     ])
-
-    if(book===null){
-        const err = new Error('Book not found')
-        err.status = 404
-        return next(err)
-    }
-
-    allGenres.forEach((genre) => {
-        if(book.genre.includes(genre._id)){
-            genre.checked = true
+    .then((data)=>{
+        const [book,allAuthors,allGenres] = data
+        
+        if(book===null){
+            const err = new Error('Book not found')
+            err.status = 404
+            next(err)
         }
-    });
-
-    res.render('book_form',{
-        title: 'Update book',
-        book:book,
-        authors:allAuthors,
-        genres:allGenres,
+    
+        allGenres.forEach((genre) => {
+            if(book.genre.includes(genre._id)){
+                genre.checked = true
+            }
+        });
+    
+        res.render('book_form',{
+            title: 'Update book',
+            book:book,
+            authors:allAuthors,
+            genres:allGenres,
+        })
     })
-})
+
+}
 
 exports.book_update_post = [
     upload.single('book_cover'),
@@ -270,7 +297,7 @@ exports.book_update_post = [
     },
     
     
-    asyncHandler(async(req,res,next) =>{
+    (req,res,next) =>{
         const errors = validationResult(req)
 
         const book = new Book({
@@ -284,29 +311,35 @@ exports.book_update_post = [
         })
 
         if(!errors.isEmpty()){
-            const [allAuthors,allGenres] = await Promise.all([
+            Promise.all([
                 Author.find().sort({last_name: 1}).exec(),
                 Genre.find().sort({name: 1}).exec()
             ])
+            .then((data)=>{
+                const [allAuthors,allGenres] = data
 
-            for(genre of allGenres){
-                if(book.genre.includes(genre._id)){
-                    genre.checked = 'true'
-                }
-            }
-
-            res.render('book_form',{
-                title: 'Update book',
-                authors: allAuthors,
-                genres: allGenres,
-                book:book,
-                errors: errors.array(),
+                
+                            for(genre of allGenres){
+                                if(book.genre.includes(genre._id)){
+                                    genre.checked = 'true'
+                                }
+                            }
+                
+                            res.render('book_form',{
+                                title: 'Update book',
+                                authors: allAuthors,
+                                genres: allGenres,
+                                book:book,
+                                errors: errors.array(),
+                            })
             })
-            return
         }
         else{
-                const updatedBook = await Book.findByIdAndUpdate(req.params.id,book,{})
-                res.redirect(updatedBook.url)
+                Book.findByIdAndUpdate(req.params.id,book,{})
+                .then((book)=>{
+                    const updatedBook = book
+                    res.redirect(updatedBook.url)
+                })
             }
-    })
+    }
 ]

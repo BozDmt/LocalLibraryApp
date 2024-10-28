@@ -14,46 +14,55 @@ exports.list = asyncHandler(async(req,res)=>{
     res.render('profile',{users: null})
 })
 
-exports.user_create_get = asyncHandler(async(req,res,next)=>{
+exports.user_create_get = (req,res,next)=>{
     res.render('user_form')
-})
+}
 
-exports.login_get = asyncHandler(async(req,res)=>{
+exports.login_get = (req,res)=>{
     res.render('login',{title: 'Log in to your account'})
-})
+}
 
-exports.login_post = asyncHandler(async (req,res)=>{    
+exports.login_post = (req,res)=>{    
     
     res.redirect('/catalog')
-})
+}
 
 exports.user_create_post = [
     //escape the password and username later  
-    // const username = req.body.username
     body('username')
     .blacklist('<>'),
 
-    asyncHandler(async(req,res,next)=>{
+    (req,res,next)=>{
         const errors = validationResult(req)
 
-        const hashedPasswd = await bcrypt.hash(req.body.password,10)
+        bcrypt.hash(req.body.password,10)
+        .then((hashedPasswd)=>{
 
-        const user = {name: req.body.username, password: hashedPasswd, role: req.body.role}
-        // localStorage.setItem('role',user.role)
-        const newUser = new User({
-            username: user.name,
-            password: user.password,
-            role: user.role
+            const {username, passwd, role} = [req.body.username, hashedPasswd, req.body.role]
+            // localStorage.setItem('role',user.role)
+            const newUser = new User({
+                username: username,
+                password: passwd,
+                role: role
+            })
+            if(errors.isEmpty()){
+                newUser.save()
+                
+                const cookieOptions = {httpOnly: true, sameSite: 'strict'}
+                
+                User.findOne({
+                    name: username,
+                    password: hashedPasswd,
+                    role: role
+                }).then((user)=>{
+                    res.cookie('id',`${user._id}`,cookieOptions)
+                    res.cookie('role',`${user.role}`,cookieOptions)        
+                    res.redirect(`/login/user/${user._id}`)
+                    // res.end()
+                })
+            }
         })
-        if(errors.isEmpty()){
-            await newUser.save()
-            const cookieOptions = {httpOnly: true, sameSite: 'strict'}
-
-            res.cookie('id',`${user._id}`,cookieOptions)
-            res.cookie('role',`${user.role}`,cookieOptions)        
-            res.redirect(`/login/user/${newUser._id}`)
-        }
-    })
+    }
 ]
 
 exports.login_logout = asyncHandler(async(req,res)=>{
@@ -64,14 +73,13 @@ exports.login_logout = asyncHandler(async(req,res)=>{
 
 exports.login_user_details = asyncHandler(async(req,res,next)=>{
     const user = await User.findById(req.params.id).exec()
-    for(book of user.books_loaned)
-        console.log(String(book))
-   const loanedBooks = []
+
+    const loanedBooks = []
    for(bookInstance of user.books_loaned){
        loanedBooks.push(String(bookInstance))
    }
     
     const books = await BookInstance.find({_id: { $in: loanedBooks}}).populate('book').exec()
-    res.render('user_details',{user:user,loanedBooks: books})
+    res.render('user_details',{user:user,loanedBooks: books? books:null})
 })
 

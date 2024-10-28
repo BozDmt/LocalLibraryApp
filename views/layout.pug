@@ -35,16 +35,19 @@ html(lang='en')
                 a(href='/catalog/genres') All genres
               li.animated
                 a(href='/catalog/bookinstances') All book copies
+              if(undefined == user)
+                li.animated(id='signup')
+                  a(href='/login') Sign up
               hr
-              if(undefined !== user && user.role === '2')
-                li 
-                  p ADMIN
-              if(undefined !== user && user.role === '1')
-                li
-                  p USER
-              li.animated
-                a(href='/login/user') My profile
-              li.animated
-                a(href='/login/logout') Sign out
+
+              if(undefined != user)
+                if(user.role === '2')
+                  li 
+                    p ADMIN
+                li.animated
+                  a(href='/login/user') My profile
+                li.animated
+                  a(href='/login/logout') Sign out
+
         div.col-sm-10
           block content

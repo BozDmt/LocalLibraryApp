@@ -16,58 +16,58 @@ const storage = multer.diskStorage({
 })
 const upload = multer({storage: storage})
 
-exports.author_list = asyncHandler(async(req,res,next)=>{
-    const allAuthors = await Author.find().sort({last_name: 1}).exec()
-
-    res.render('author_list', {title: 'Author List', author_list: allAuthors})
-})
-
-exports.author_detail = asyncHandler(async(req,res,next)=>{
-    const [author, bookList] = await Promise.all([
-        Author.findById(req.params.id).exec(),
-        Book.find({author: req.params.id}).populate('genre').exec(),
-    ])
-
-    const genres = []
-    
-    bookList.forEach((book)=>{
-        if(book.genre.length > 0){
-            for(val of book.genre){
-                genres.push(val.name)
-            }
-        }            
+exports.author_list = (req,res,next)=>{
+    Author.find()
+    .sort({last_name: 1})
+    .exec().then((allAuthors)=>{
+        res.render('author_list', {title: 'Author List', author_list: allAuthors})
     })
 
-    console.log(genres)
-    const genreList = await Genre.find({name: {$in: genres}}).exec()
+}
 
-    if(author === null){
-        const err = new Error('Author not found')
-        err.status = 404
-        return next(err)
-    }
+exports.author_detail = (req,res,next)=>{
+    Promise.all([
+        Author.findById(req.params.id).exec(),
+        Book.find({author: req.params.id}).populate('genre').exec(),
+    ]).then(([author,bookList])=>{
 
-    res.render('author_details',{author: author, books: bookList, genres: genreList})
-})
+        const genres = []
+        
+        bookList.forEach((book)=>{
+            if(book.genre.length > 0){
+                for(val of book.genre){
+                    genres.push(val.name)
+                }
+            }            
+        })
+        Genre.find({name: {$in: genres}}).exec()
+        .then((genreList)=>{
+            if(author === null){
+                const err = new Error('Author not found')
+                err.status = 404
+                next(err)
+            }
+            res.render('author_details',{author: author, books: bookList, genres: genreList})
+        })
+    })
+}
 
-exports.author_create_get = asyncHandler(async(req,res,next)=>{
+exports.author_create_get = (req,res,next)=>{
     res.render('author_form',{title: 'Create Author'})
-})
+}
 
 exports.author_create_post = [
+    upload.single('author_photo'),
+    
     body('first_name')
     .trim()
-    .isLength({min: 2})
+    .isLength({max: 40})
     .escape()
-    .withMessage('First name must be specified')
-    .isAlphanumeric()
-    .withMessage('Name shouldn`t contain non-alphanumeric characters'),
+    .withMessage('Input too long'),
     body('last_name')
     .trim()
-    .isLength({min: 2})
-    .withMessage('Surname must be specified')
-    .isAlphanumeric()
-    .withMessage('Name shouldn`t contain non-alphanumeric characters'),
+    .isLength({max: 40})
+    .withMessage('Input too long'),
     body('date_of_birth','Invalid date')
     .isISO8601()
     .toDate(),
@@ -76,9 +76,7 @@ exports.author_create_post = [
     .isISO8601()
     .toDate(),
 
-    upload.single('author_photo'),
-
-    asyncHandler(async(req,res,next)=>{
+    (req,res,next)=>{
         const errors = validationResult(req)
 
         const author = new Author({
@@ -86,7 +84,7 @@ exports.author_create_post = [
             last_name: req.body.last_name,
             date_of_birth: req.body.date_of_birth,
             date_of_death: req.body.date_of_death,
-            photo: req.file? '/authorPics/' + path.basename(req.file.path):'/authorPics/default_profile_pic',
+            photo: req.file? '/authorPics/' + path.basename(req.file.path):undefined,//'/authorPics/default_profile_pic',
         })
 
         if(!errors.isEmpty()){
@@ -95,25 +93,26 @@ exports.author_create_post = [
                 author: author,
                 errors: errors.array(),
             })            
-            return
         }
         else{
-            const authorExists = await Author.findOne({
+            Author.findOne({
                 first_name: req.body.first_name,
                 last_name: req.body.last_name,
                 date_of_birth: req.body.date_of_birth,
                 date_of_death: req.body.date_of_death,
             }).exec()
+            .then((authorExists)=>{
+
+                if(authorExists){
+                    res.redirect(authorExists.url)
+                }
+                else{
+                    author.save().then(()=>res.redirect(author.url))
+                }
+            })
             
-            if(authorExists){
-                res.redirect(authorExists.url)
-            }
-            else{
-                await author.save()
-                res.redirect(author.url)
-            }
         }
-    })
+    }
 ]
 
 exports.author_delete_get = asyncHandler(async(req,res,next)=>{

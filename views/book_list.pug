@@ -22,16 +22,17 @@ block content
                                 |   #{book.author.name}
                                 |   - #{book.title}
     if pages 
-        div.pagnav
-            if paginate.hasPreviousPages    
-                a(href=paginate.href(true))
-                    i.pag-nav
-                        | Previous&nbsp;
-            each page in pages  
-                a.btn.btn-primary(href=page.url)= page.number
-            if paginate.hasNextPages(pageCount)
-                a(href=paginate.href())
-                    i.pag-nav
-                        | Next&nbsp;
+        div.pagenav
+            div.pagenum
+                if paginate.hasPreviousPages    
+                    a.page-nav(href=paginate.href(true))
+                        i
+                            | Previous&nbsp;
+                each page in pages  
+                    a.btn.btn-primary(href=page.url)= page.number
+                if paginate.hasNextPages(pageCount)
+                    a.page-nav(href=paginate.href())
+                        i
+                            | Next&nbsp;
     else 
         p There are no books at the moment.

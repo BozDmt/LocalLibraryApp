@@ -66,6 +66,7 @@ router.post('/genre/:id/delete', genre_controller.genre_delete_post)
 
 router.get('/genre/:id', genre_controller.genre_detail)
 router.get('/genres', genre_controller.genre_list)
+router.get('/genres/ids',genre_controller.genre_id_list_get)
 
 //scripts
 // router.get('/scripts',book_controller)
