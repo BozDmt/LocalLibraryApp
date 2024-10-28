@@ -1,0 +1,50 @@
+doctype html 
+html(lang='en')
+  head 
+    block head
+      title=title 
+      meta(charset='utf-8')
+      meta(name='viewport', content='width=device-width, initial-scale=1')
+      link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css'
+      ,integrity='sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N', crossorigin='anonymous', src='https://code.jquery.com/jquery-3.5.1.slim.min.js')
+      script(src='https://code.jquery.com/jquery-3.5.1.slim.min.js',
+        integrity='sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj',crossorigin='anonymous')
+      link(rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css")
+      script(src='https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js'
+      , integrity='sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+'
+      ,crossorigin='anonymous')
+      script(src="/javascripts/animateSidebar.js" defer) 
+      script(src="/javascripts/mobileNav.js" defer) 
+      link(rel='stylesheet', href='/stylesheets/style.css')
+  body 
+    header
+      div.header-div
+        h2 Bobb's Local Library
+    div.container-fluid
+      div.row
+        div.col-sm-2
+          block sidebar
+            ul.sidebar-nav
+              li.animated
+                a(href='/catalog') Home
+              li.animated
+                a(href='/catalog/books') All books
+              li.animated
+                a(href='/catalog/authors') All authors
+              li.animated
+                a(href='/catalog/genres') All genres
+              li.animated
+                a(href='/catalog/bookinstances') All book copies
+              hr
+              if(undefined !== user && user.role === '2')
+                li 
+                  p ADMIN
+              if(undefined !== user && user.role === '1')
+                li
+                  p USER
+              li.animated
+                a(href='/login/user') My profile
+              li.animated
+                a(href='/login/logout') Sign out
+        div.col-sm-10
+          block content

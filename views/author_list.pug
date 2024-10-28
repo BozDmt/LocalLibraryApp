@@ -1,0 +1,18 @@
+extends layout 
+
+block content
+    h1= title
+
+    if author_list.length 
+        div.container
+            each author in author_list 
+                div.item
+                    a(href=author.url)
+                        img(src=author.photo || "/public/authorPics/default_pic.jpeg", alt="/public/authorPics/default_pic.jpeg")
+                        | #{author.name}
+                        if author.date_of_birth
+                            |;  Born: #{author.dob_formatted}
+                            if author.date_of_death
+                                |,   Died: #{author.dod_formatted}
+    else
+        p No authors available.
