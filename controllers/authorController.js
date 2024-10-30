@@ -2,7 +2,6 @@ const Author = require('../models/author')
 const Book = require('../models/book')
 const Genre = require('../models/genre')
 const {body, validationResult} = require('express-validator')
-const asyncHandler = require('express-async-handler')
 const multer = require('multer')
 const path = require('path')
 const storage = multer.diskStorage({
@@ -115,42 +114,50 @@ exports.author_create_post = [
     }
 ]
 
-exports.author_delete_get = asyncHandler(async(req,res,next)=>{
-    const [author, authorBooks] = await Promise.all([
+exports.author_delete_get = (req,res,next)=>{
+    Promise.all([
         Author.findById(req.params.id).exec(),
         Book.find({author: req.params.id}, 'title summary').exec(),
-    ])
+    ]).then(([author, authorBooks] )=>{
 
-    if(author === null){
-        res.redirect('/catalog/authors')
-    }
-
-    res.render('author_delete',{title: 'Delete Author', author:author, authorBooks: authorBooks})
-})
-
-exports.author_delete_post = asyncHandler(async(req,res,next)=>{
-    const[author, authorBooks] = await Promise.all([
-        Author.findById(req.params.id).exec(),
-        Book.find({author: req.params.id}, 'title summary').exec(),
-    ])
+        if(author === null){
+            res.redirect('/catalog/authors')
+        }
     
-    if(authorBooks.length > 0){
-        res.render('author_delete',{title: 'Delete Author', author: author, authorBooks: authorBooks,})
-        return
-    }
-    else{
-        await Author.findByIdAndDelete(req.body.authorid).exec()
-        res.redirect('/catalog/authors')
-    }
-})
-
-exports.author_update_get = asyncHandler(async(req,res,next)=>{
-    const author = await Author.findById(req.params.id).exec()
-    res.render('author_form',{
-        title: 'Update author',
-        author: author,
+        res.render('author_delete',{title: 'Delete Author', author:author, authorBooks: authorBooks})
+        res.end()
     })
-})
+
+}
+
+exports.author_delete_post = (req,res,next)=>{
+    Promise.all([
+        Author.findById(req.params.id).exec(),
+        Book.find({author: req.params.id}, 'title summary').exec(),
+    ]).then(([author, authorBooks])=>{
+
+        if(authorBooks.length > 0){
+            res.render('author_delete',{title: 'Delete Author', author: author, authorBooks: authorBooks,})
+            return
+        }
+        else{
+            Author.findByIdAndDelete(req.body.authorid).exec()
+            .then(()=>{
+                res.redirect('/catalog/authors')
+            }).catch((e)=>console.error(e))
+        }
+    })   
+}
+
+exports.author_update_get = (req,res,next)=>{
+    Author.findById(req.params.id).exec()
+    .then((author)=>{
+        res.render('author_form',{
+            title: 'Update author',
+            author: author,
+        })
+    })
+}
 
 exports.author_update_post = [
     upload.single('author_photo'),
@@ -176,27 +183,31 @@ exports.author_update_post = [
     .isISO8601()
     .toDate(),   
     
-    asyncHandler(async(req,res)=>{
+    (req,res)=>{
         const errors = validationResult(req)
         if(!errors.isEmpty()){
-            const author = await Author.findById(req.params.id).exec()
-            res.render('author_form',{
-                title: 'Update author',
-                author: author,
-                errors: errors.array(),
+            Author.findById(req.params.id).exec()
+            .then((author)=>{
+
+                res.render('author_form',{
+                    title: 'Update author',
+                    author: author,
+                    errors: errors.array(),
+                })
+                res.end()
             })
-            return
         }
         else{
-            const updatedAuthor = await Author.findByIdAndUpdate(req.params.id,{
+            Author.findByIdAndUpdate(req.params.id,{
                 first_name: req.body.first_name,
                 last_name: req.body.last_name,
                 date_of_birth: req.body.date_of_birth,
                 date_of_death: req.body.date_of_death,
                 photo: req.file? '/authorPics/' + path.basename(req.file.path): req.body.photo_url,
                 _id: req.params.id,
+            }).then((updatedAuthor)=>{
+                res.redirect(updatedAuthor.url)
             })
-            res.redirect(updatedAuthor.url)
         }
-    })
+    }
 ]

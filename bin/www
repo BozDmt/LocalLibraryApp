@@ -3,53 +3,18 @@ const fs = require('fs')
 /**
  * Module dependencies.
  */
-const express = require('express')
 const app = require('../app');
 const debug = require('debug')('locallibraryapp:server');
 const http = require('http');
-// const https = require('node:https')
-// import { Server } from 'socket.io'
-/**
- * Get port from environment and store in Express.
- */
-
-// const options = {
-//   key: fs.readFileSync('/home/mitch/LocalLibraryApp/cert/privkey.pem'),
-//   cert: fs.readFileSync('/home/mitch/LocalLibraryApp/cert/fullchain.pem'),
-// }
 
 const port = normalizePort(process.env.PORT || '5000');
 app.set('port', port);
-// const sslPort = normalizePort(process.env.PORT || '5000')
 
-/**
- * Create HTTP server.
- */
 const server = http.createServer(app);
-// const sslServer = https.createServer(options,app)
-// sslServer.listen(3600)
-/**
- * Listen on provided port, on all network interfaces.
- */
+
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
-
-// function sslOnListening() {
-//   const addr = sslServer.address();
-//   const bind = typeof addr === 'string'
-//     ? 'pipe ' + addr
-//     : 'port ' + addr.port;
-//   debug('Listening on ' + bind);
-// }
-
-
-// sslServer.on('error', onError);
-// sslServer.on('listening', sslOnListening);
-
-/**
- * Normalize a port into a number, string, or false.
- */
 
 function normalizePort(val) {
   const port = parseInt(val, 10);
@@ -66,10 +31,6 @@ function normalizePort(val) {
 
   return false;
 }
-
-/**
- * Event listener for HTTP server "error" event.
- */
 
 function onError(error) {
   if (error.syscall !== 'listen') {
@@ -94,10 +55,6 @@ function onError(error) {
       throw error;
   }
 }
-
-/**
- * Event listener for HTTP server "listening" event.
- */
 
 function onListening() {
   const addr = server.address();

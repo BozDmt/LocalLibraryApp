@@ -1,18 +1,17 @@
 const jwt = require('jsonwebtoken')
 const {body, validationResult} = require('express-validator')
-const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
 const BookInstance = require('../models/bookInstance')
 
 let refreshTokens = []
 
-exports.list = asyncHandler(async(req,res)=>{
+exports.list = (req,res)=>{
     // const users = await LibraryMember.find({}).exec()
     //this is useless, when you log in there will be the jwt which holds your username and/or id, so you will be 
     //able to access your profile page
     res.render('profile',{users: null})
-})
+}
 
 exports.user_create_get = (req,res,next)=>{
     res.render('user_form')
@@ -65,21 +64,26 @@ exports.user_create_post = [
     }
 ]
 
-exports.login_logout = asyncHandler(async(req,res)=>{
+exports.login_logout = (req,res)=>{
     refreshTokens = refreshTokens.filter(token => token !== req.cookies.jwt)
     res.cookies = null  
     res.json(refreshTokens)
-})
+}
 
-exports.login_user_details = asyncHandler(async(req,res,next)=>{
-    const user = await User.findById(req.params.id).exec()
+exports.login_user_details = (req,res,next)=>{
+    User.findById(req.params.id).exec()
+    .then((user)=>{
 
-    const loanedBooks = []
-   for(bookInstance of user.books_loaned){
-       loanedBooks.push(String(bookInstance))
-   }
-    
-    const books = await BookInstance.find({_id: { $in: loanedBooks}}).populate('book').exec()
-    res.render('user_details',{user:user,loanedBooks: books? books:null})
-})
-
+        const loanedBooks = []
+        for(bookInstance of user.books_loaned){
+            loanedBooks.push(String(bookInstance))
+        }
+        
+        BookInstance.find({_id: { $in: loanedBooks}}).populate('book').exec()
+        .then((books)=>{
+            
+            res.render('user_details',{user:user,loanedBooks: books? books:null})
+            res.end()
+        })
+    })
+}
