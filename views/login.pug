@@ -1,21 +1,24 @@
 extends layout
-block sidebar
-    p Not a user? 
-        a(href='/login/user/create') Create a profile
-block content
-    form(method='POST')
-        div.form-group
-            label(for='username') Username: 
-            input#username.form-control(type='text', name='username' required)
+block body
+    div#login.container
+        div.form-container
+            form(method='POST')
+                div.form-group
+                    label(for='username') Username: 
+                    input#username.form-control(type='text', name='username' required)
 
-        div.form-group
-            label(for='password') Password: 
-            input#password.form-control(type='password', name='password' required)
-                    
-        button.btn.btn-primary(type='submit') Log in
-    div(class='errorDiv')
-        p
-        if errors 
-            ul(style='list-style-type:none;')
-                each error in errors 
-                    li(style='color:red;')!=error.msg
+                div.form-group
+                    label(for='password') Password: 
+                    input#password.form-control(type='password', name='password' required)
+                            
+                button.btn.btn-primary(type='submit') Log in
+                div.login-footer 
+                    p Not a user? 
+                        button.btn.btn-primary(style='background-color:#17a937;')
+                            a(href='/user/create') Create a profile
+            div.errorDiv
+                p
+                if errors 
+                    ul(style='list-style-type:none;')
+                        //- each error in errors 
+                        li(style='color:red;')!=errors.msg

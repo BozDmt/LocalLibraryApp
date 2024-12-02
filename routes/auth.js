@@ -1,8 +1,6 @@
 //access token for login, refresh token for browsing in site
 const jwt = require('jsonwebtoken')
 
-const tokens = []
-
 module.exports = function(app){
 
     app.use(function(req,res,next){

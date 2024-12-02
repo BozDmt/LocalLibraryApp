@@ -1,13 +1,25 @@
 extends layout
+block append head 
+    script(src="/javascripts/deleteUserDialog.js" defer) 
 block content    
     div.profile
         div.item 
             img(src="/images/bookIcon.jpg", alt="Your picture")
-            p Your nickname
+            p #(user.username)
         div.profileinfo 
             p Member since: 29.9.1999
-            button.btn.btn-primary edit profile
-            button.btn.btn-primary delete profile
+            details#myDetails
+                summary.btn.btn-primary delete profile    
+                dialog#myDialog
+                    form(method='POST')
+                        .form-group 
+                            label(for='username') Username:
+                            input#username.form-control(type='text',name='username' required)
+                            label(for='password') Password: 
+                            input#password.form-control(type='text',name='password' required)
+                        button.btn.btn-danger(type='submit') Delete Profile
+        //- div
+        //-     button.btn.btn-primary edit profile
         div.profilebooks
             p your books: 
             p each book goes in here

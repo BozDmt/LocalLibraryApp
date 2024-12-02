@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-
+import mongoose from 'mongoose'
+import bcrypt from 'bcrypt'
 const Schema = mongoose.Schema
 
 const userSchema = new Schema({
@@ -10,8 +10,38 @@ const userSchema = new Schema({
     role: {type: String, required: true}
 })
 
+userSchema.pre('save',function (next){
+    const salt = bcrypt.genSalt(10)
+    salt.then((salty)=>{
+        const hashedPass = bcrypt.hash(this.password,salty)
+        return hashedPass
+    }).then((hashed)=>{
+        this.password = hashed
+        return next()
+    })
+})
+
+// userSchema.post('save',function(next){
+    // console.log(`user saved:${this}`)
+    // next()
+    // return bcrypt.hash(data.password,10)
+    //     .then(()=>next())
+// })
+
 userSchema.virtual("url").get(function(){
     return `user/${this._id}`
 })
 
-module.exports = mongoose.model("User", userSchema)
+userSchema.method('comparePasswd',function(plaintext){
+    return new Promise((resolve, reject)=>{
+        bcrypt.compare(plaintext,this.password)
+            .then((matches)=>{
+                if(matches)
+                    resolve(true)
+                else
+                    resolve(false)
+            })
+    })
+})
+
+export default mongoose.model("User", userSchema)

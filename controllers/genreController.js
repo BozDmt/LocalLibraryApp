@@ -1,13 +1,13 @@
-const Genre = require('../models/genre')
-const Book = require('../models/book')
-const {body, validationResult} = require('express-validator')
+import Genre from '../models/genre.js'
+import Book from '../models/book.js'
+import {body, validationResult} from 'express-validator'
 
 function listIds (){return new Promise((resolve,reject)=>{
         const genreIds = Genre.find({},'_id').exec().then(result=>result)
         resolve(genreIds)
 })}
 
-exports.genre_list = (req,res,next)=>{
+export function genre_list(req,res,next){
     Genre.find()
     .sort({name: 1})
     .exec()
@@ -18,7 +18,7 @@ exports.genre_list = (req,res,next)=>{
 
 }
 
-exports.genre_detail = (req,res,next)=>{
+export function genre_detail(req,res,next){
     // const [genre, booksInGenre] = 
     Promise.all([
         Genre.findById(req.params.id).exec(),
@@ -42,11 +42,11 @@ exports.genre_detail = (req,res,next)=>{
 
 //for such form, asyncHandler is unnecessary, as it is just a wrapper for error code, which in this case won't
 //be present
-exports.genre_create_get = (req,res,next)=>{
+export function genre_create_get (req,res,next){
     res.render('genre_form',{title: 'Create Genre'})
 }
 
-exports.genre_create_post = [
+export const genre_create_post = [
     body('name', 'Genre name must be at least 3 characters long')
     .trim()
     .isLength({min: 3})
@@ -82,18 +82,18 @@ exports.genre_create_post = [
     }
 ]
 
-exports.genre_delete_get = (req,res,next)=>{
+export function genre_delete_get (req,res,next){
     Genre.findById(req.params.id)
     .then((genre)=>{res.render('genre_delete',{genre: genre})})
 }
 
-exports.genre_delete_post = (req,res,next)=>{
+export function genre_delete_post (req,res,next){
     Genre.findByIdAndDelete(req.body.genreid)
     .exec()
     .then(res.redirect('/catalog/genres'))
 }
 
-exports.genre_id_list_get = (req,res,next)=>{
+export function genre_id_list_get (req,res,next){
     const jsonIds = listIds()
     .then(result=>res.send(JSON.stringify(result)))
     .catch((e)=>{console.log(e)})

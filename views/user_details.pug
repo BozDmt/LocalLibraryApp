@@ -16,9 +16,10 @@ block content
     p Books loaned: 
     hr
     ul
-        each bookinstance in loanedBooks
-            li 
-                p #{bookinstance.book.title}
-                p #{bookinstance.due_back_formatted}
-                a(href=bookinstance.url+'/return') Return book 
-                hr
+        if(loanedBooks)    
+            each bookinstance in loanedBooks
+                li 
+                    p #{bookinstance.book.title}
+                    p #{bookinstance.due_back_formatted}
+                    a(href=bookinstance.url+'/return') Return book 
+                    hr

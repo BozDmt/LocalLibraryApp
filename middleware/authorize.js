@@ -1,25 +1,12 @@
-const jwt = require('jsonwebtoken')
-const asyncHandler = require('express-async-handler')
+import * as jwt from 'jsonwebtoken'
 
-// exports.verifyToken = (req,res,next)=>{
-//     let token = req.headers['x-access-token']
+function verifyToken(req,res,next){
 
-//     if(!token){
-//         res.redirect('/login')
-//     }
-
-//     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET,(err)=>{
-//         if(err){
-//             res.redirect('/login')
-//         }
-//         next()
-//     })
-// }
-exports.verifyToken = asyncHandler(async (req,res,next)=>{
     // const username = req.cookies.user
-    
+    //noo, not like that! Decode the jwt and extract the id 
     // const token = req.cookies.token? req.cookies.token: null
-        
+    const token = jwt.decode(req.cookies.jwt,{complete: true})
+    const userId = token.id
     // if(!token) 
     //     return res.redirect('/login')
     // else
@@ -33,4 +20,6 @@ exports.verifyToken = asyncHandler(async (req,res,next)=>{
     
     next()
     
-})
+}
+
+export {verifyToken as authzMw}

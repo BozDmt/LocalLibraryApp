@@ -1,0 +1,12 @@
+extends layout 
+block content
+    form(method='POST')
+        .form-group 
+            label(for='username') Username:
+            input#username.form-control(type='text',name='username' required)
+            label(for='password') Password: 
+            input#password.form-control(type='text',name='password' required)
+        button.btn.btn-danger(type='submit') Delete Profile
+    if errors 
+        ul 
+            li!= errors.msg

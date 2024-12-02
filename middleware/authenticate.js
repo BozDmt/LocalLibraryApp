@@ -1,10 +1,9 @@
-const jwt = require('jsonwebtoken')
+import * as jwt from 'jsonwebtoken'
 // const {body, validationResult} = require('express-validator')
-const asyncHandler = require('express-async-handler')
-const bcrypt = require('bcrypt')
-const User = require('../models/user')
-//implement the catalog redirection 
-exports.login_post = asyncHandler(async (req,res,next)=>{
+import * as bcrypt from 'bcrypt'
+import User from '../models/user.js'
+
+function authentication (req,res,next){
 
 //     const user = await User.findOne({username:req.body.username}).exec()
 //     const cookieOptions = {httpOnly: true, sameSite: 'strict'}
@@ -33,4 +32,6 @@ exports.login_post = asyncHandler(async (req,res,next)=>{
 
     // res.sendStatus(200)
     next()
-})
+}
+
+export {authentication as authMw}

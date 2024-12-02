@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-const fs = require('fs')
+import fs from 'fs'
 /**
  * Module dependencies.
  */
-const app = require('../app');
-const debug = require('debug')('locallibraryapp:server');
-const http = require('http');
+import app from '../app.js'
+import debug from 'debug'
+debug('locallibraryapp:server')
+import http from 'http'
 
 const port = normalizePort(process.env.PORT || '5000');
 app.set('port', port);

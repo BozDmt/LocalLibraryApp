@@ -1,13 +1,13 @@
-const paginate = require('express-paginate')
-const jwt = require('jsonwebtoken')
-const Book = require('../models/book')
-const Author = require('../models/author')
-const Genre = require('../models/genre')
-const BookInstance = require('../models/bookInstance')
-const {body, validationResult} = require('express-validator')
-const path = require('path')
-const multer = require('multer')
-const user = require('../models/user')
+import paginate from 'express-paginate'
+import jwt from 'jsonwebtoken'
+import Book from '../models/book.js'
+import Author from '../models/author.js'
+import Genre from '../models/genre.js'
+import BookInstance from '../models/bookInstance.js'
+import {body, validationResult} from'express-validator'
+import path from 'path'
+import multer from 'multer'
+// import user from '../models/user,js'
 const storage = multer.diskStorage({
     destination: function(req,file,cb){
         cb(null,'public/bookCovers')
@@ -20,10 +20,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage})
     
-exports.index = (req,res,next)=>{
-    const token = req.cookies.token
-    let userURL = ''
-
+export function index (req,res,next){
+    const token = req.cookies.jwt? jwt.decode(req.cookies.jwt): null
+    console.log(req.cookies)
+    let loggedIn = token? true : false
+        
+    // const userdata = JSON.parse(req.user) || null
+    // console.log(userdata)
     Promise.all([
         Book.countDocuments({}).exec(),
         Author.countDocuments({}).exec(),
@@ -46,7 +49,9 @@ exports.index = (req,res,next)=>{
             genre_count: numGenres,
             bookinstance_count: numBookInstances,
             avl_bookinstance_count: numAvailableBookInstances,
-            user_url:userURL.url
+            logged_in: loggedIn
+            // user_url:userURL.url,
+            // user: userdata,
             //way to determine if there is a user, and which role he is
         })
     })
@@ -55,7 +60,7 @@ exports.index = (req,res,next)=>{
 
 }
 
-exports.book_list = (req,res,next)=>{
+export function book_list (req,res,next){
     Promise.all([Book.find({},'title author cover genre')
     .sort({title: 1})
     .populate('author')
@@ -86,7 +91,7 @@ exports.book_list = (req,res,next)=>{
  */
 }
 
-exports.book_detail = (req,res,next)=>{
+export function book_detail (req,res,next){
     Promise.all([
         Book.findById(req.params.id).populate('author').populate('genre').exec(),
         BookInstance.find({book: req.params.id}).exec(),
@@ -109,7 +114,7 @@ exports.book_detail = (req,res,next)=>{
     
 }
 
-exports.book_create_get = (req,res,next)=>{
+export function book_create_get (req,res,next){
     Promise.all([
         Author.find().sort({last_name: 1}).exec(),
         Genre.find().sort({name: 1}).exec()
@@ -122,7 +127,7 @@ exports.book_create_get = (req,res,next)=>{
 
 }
 
-exports.book_create_post = [
+export const book_create_post = [
     (req,res,next) => {
         if(!Array.isArray(req.body.genre)){
             req.body.genre = typeof req.body.genre === 'undefined'? []:[req.body.genre]
@@ -198,7 +203,7 @@ exports.book_create_post = [
         }
     }]
 
-    exports.book_delete_get = (req,res,next)=>{
+    export function book_delete_get (req,res,next){
         Promise.all([
             Book.findById(req.params.id).exec(),
             BookInstance.find({book: req.params.id},'book imprint status due_back'),
@@ -215,7 +220,7 @@ exports.book_create_post = [
 
 }
 
-exports.book_delete_post = (req,res,next)=>{
+export function book_delete_post (req,res,next){
     Promise.all([
         Book.findById(req.params.id).exec(),
         BookInstance.find({book: req.params.id},'book imprint status due_back'),
@@ -238,7 +243,7 @@ exports.book_delete_post = (req,res,next)=>{
     })
 }
 
-exports.book_update_get = (req,res,next)=>{
+export function book_update_get (req,res,next){
     Promise.all([
         Book.findById(req.params.id).exec(),
         Author.find({}).sort({last_name: 1}).exec(),
@@ -269,7 +274,7 @@ exports.book_update_get = (req,res,next)=>{
 
 }
 
-exports.book_update_post = [
+export const book_update_post = [
     upload.single('book_cover'),
     
     body('authorName')
@@ -317,21 +322,20 @@ exports.book_update_post = [
             ])
             .then((data)=>{
                 const [allAuthors,allGenres] = data
-
-                
-                            for(genre of allGenres){
-                                if(book.genre.includes(genre._id)){
-                                    genre.checked = 'true'
-                                }
-                            }
-                
-                            res.render('book_form',{
-                                title: 'Update book',
-                                authors: allAuthors,
-                                genres: allGenres,
-                                book:book,
-                                errors: errors.array(),
-                            })
+      
+                for(genre of allGenres){
+                    if(book.genre.includes(genre._id)){
+                        genre.checked = 'true'
+                    }
+                }
+    
+                res.render('book_form',{
+                    title: 'Update book',
+                    authors: allAuthors,
+                    genres: allGenres,
+                    book:book,
+                    errors: errors.array(),
+                })
             })
         }
         else{

@@ -1,22 +1,26 @@
-const mongoose = require('mongoose')
-const paginate = require('express-paginate')
-const createError = require('http-errors');
-const helmet = require('helmet')
-const express = require('express');
+import dotenv from 'dotenv';
+dotenv.config({path:'./.env'})
+import mongoose  from 'mongoose'
+import paginate from 'express-paginate'
+import createError from 'http-errors';
+import helmet from 'helmet'
+import express from 'express';
 const app = express();
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const crypto = require('node:crypto')
-const cors = require('cors')
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-const profilesRouter = require('./routes/profiles')
-const catalogRouter = require('./routes/catalog')
-const loginRouter = require('./routes/login')
+import path, { dirname } from 'path'
+import cookieParser from 'cookie-parser'
+import logger from 'morgan'
+import crypto from 'node:crypto'
+import cors from 'cors'
+import indexRouter from './routes/index.js'
+import {usersRouter} from './routes/users.js'
+import {authMw} from './middleware/authenticate.js'
+import {authzMw} from './middleware/authorize.js'
+// const profilesRouter = require('./routes/profiles')
+import {catalogRouter} from './routes/catalog.js'
+import {loginRouter} from './routes/login.js'
 // view engine setup
-app.set('title','Bobb\'s Library')
-app.set('views', path.join(__dirname, 'views'));
+app.set('title','The local Library')
+app.set('views', path.join(dirname('.'), 'views'));
 app.set('view engine', 'pug');
 
 // app.use(
@@ -42,15 +46,15 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(dirname('.'), 'public')));
 
-app.use('/', indexRouter);
+app.use('/',authMw, indexRouter);
 //testing purposes
 app.use('/user', usersRouter);
-app.use('/user/profile', profilesRouter)
+// app.use('/user/profile', profilesRouter)
 //testing purposes
-app.use('/catalog',catalogRouter)
-app.use('/login',loginRouter)
+app.use('/catalog',/*authzMw.verifyToken,*/catalogRouter)
+app.use('/login'/*,authMw.login_post*/,loginRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -75,4 +79,5 @@ main().catch((err) => console.log(err))
 async function main(){
   await mongoose.connect(mongoConnection)
 }
-module.exports = app;
+
+export default app

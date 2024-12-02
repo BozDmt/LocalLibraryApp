@@ -1,12 +1,12 @@
-const BookInstance = require('../models/bookInstance')
-const paginate = require('express-paginate')
-const {body, validationResult} = require('express-validator')
-const Book = require('../models/book')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
-const book = require('../models/book')
+import BookInstance from'../models/bookInstance.js'
+import paginate from'express-paginate'
+import {body, validationResult} from'express-validator'
+import Book from'../models/book.js'
+import User from'../models/user.js'
+import jwt from'jsonwebtoken'
+// import book from'../models/book.js'
 
-exports.bookInstance_list = (req,res,next)=>{
+export function bookInstance_list (req,res,next){
     Promise.all([BookInstance.find()
     .populate('book')
     .skip(req.query.skip)
@@ -28,7 +28,7 @@ exports.bookInstance_list = (req,res,next)=>{
     })
 }
 
-exports.bookInstance_detail = (req,res,next)=>{
+export function bookInstance_detail (req,res,next){
     BookInstance
     .findById(req.params.id)
     .populate('book')
@@ -41,7 +41,7 @@ exports.bookInstance_detail = (req,res,next)=>{
 
 }
 
-exports.bookInstance_create_get = (req, res, next) => {
+export function bookInstance_create_get (req, res, next){
     Book
     .find({}, "title")
     .sort({ title: 1 })
@@ -57,7 +57,7 @@ exports.bookInstance_create_get = (req, res, next) => {
 }
   
 
-exports.bookInstance_create_post = [
+export const bookInstance_create_post = [
     body('book','Book must be specified')
     .trim()
     ,
@@ -107,7 +107,7 @@ exports.bookInstance_create_post = [
 
 ]
 
-exports.bookInstance_delete_get = (req,res)=>{
+export function bookInstance_delete_get (req,res){
     BookInstance
     .findById(req.params.id)
     .populate('book')
@@ -126,7 +126,7 @@ exports.bookInstance_delete_get = (req,res)=>{
 
 }
 
-exports.bookInstance_delete_post = (req,res)=>{
+export function bookInstance_delete_post (req,res){
         
     BookInstance
     .findByIdAndDelete(req.params.id)
@@ -140,7 +140,7 @@ exports.bookInstance_delete_post = (req,res)=>{
     
 }
 
-exports.bookInstance_update_get = (req,res,next)=>{
+export function bookInstance_update_get (req,res,next){
     BookInstance
     .findById(req.params.id)
     .populate('book')
@@ -154,7 +154,7 @@ exports.bookInstance_update_get = (req,res,next)=>{
     })
 }
 
-exports.bookInstance_update_post =[ 
+export const bookInstance_update_post = [ 
     body('imprint','Imprint must be provided')
     .trim()
     .blacklist('<>')
@@ -204,7 +204,7 @@ exports.bookInstance_update_post =[
     }
 ]
 
-exports.bookinstance_loan_get = (req,res,next)=>{
+export function bookinstance_loan_get (req,res,next){
     BookInstance
     .findById(req.params.id)
     .populate('book')
@@ -215,11 +215,11 @@ exports.bookinstance_loan_get = (req,res,next)=>{
 
 }
 
-exports.bookinstance_loan_post = [
+export const bookinstance_loan_post = [
     (req,res,next)=>{
-        const token = jwt.decode(req.cookies.jwt,process.env.ACCESS_TOKEN_SECRET)
+        const token = jwt.decode(req.cookies.jwt)
 
-        const threeMonths = Date.now() + 7776000000
+        const threeMonths = Date.now() + 5184000000
         Promise.all([
             BookInstance.
             findByIdAndUpdate(req.params.id,{
@@ -227,17 +227,23 @@ exports.bookinstance_loan_post = [
                 due_back: threeMonths,
             }),
             User
-            .findById(token.id)
+            .findById(token.uid)
         ])
         .then(([bookinstance,theUser])=>{
             theUser.books_loaned.push(bookinstance._id)
             return [bookinstance, theUser]
         })
         .then(([bookinstance,theUser])=>{
-            User.findByIdAndUpdate(token.id,{books_loaned: theUser.books_loaned},{})
+            return User.findByIdAndUpdate(token.uid,{books_loaned: theUser.books_loaned},{})
+            .then(()=>
+                bookinstance
+            )//.catch(e=>{})
         })
-        .then(()=>{
+        .then((bookinstance)=>{
             res.redirect(bookinstance.url)
+        }).catch(e=>{
+            console.error(e)
+            res.redirect('/catalog/bookinstances')
         })
         
         // const returnDate = DateTime.fromMillis(today).toLocaleString(DateTime.DATE_MED)
@@ -245,11 +251,11 @@ exports.bookinstance_loan_post = [
         
 }]
 
-exports.bookinstance_return_get = (req,res)=>{
+export function bookinstance_return_get (req,res){
     res.render('bookinstance_return')
 }
 
-exports.bookinstance_return_post = [
+export const bookinstance_return_post = [
     (req,res)=>{
         const user = jwt.decode(req.cookies.jwt,process.env.ACCESS_TOKEN_SECRET)
         

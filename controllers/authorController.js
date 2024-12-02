@@ -1,9 +1,9 @@
-const Author = require('../models/author')
-const Book = require('../models/book')
-const Genre = require('../models/genre')
-const {body, validationResult} = require('express-validator')
-const multer = require('multer')
-const path = require('path')
+import Author from'../models/author.js'
+import Book from'../models/book.js'
+import Genre from'../models/genre.js'
+import {body, validationResult} from'express-validator'
+import multer from'multer'
+import path from'path'
 const storage = multer.diskStorage({
     destination: function(req,file,cb){ 
         cb(null,'public/authorPics')
@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({storage: storage})
 
-exports.author_list = (req,res,next)=>{
+export function author_list (req,res,next){
     Author.find()
     .sort({last_name: 1})
     .exec().then((allAuthors)=>{
@@ -24,7 +24,7 @@ exports.author_list = (req,res,next)=>{
 
 }
 
-exports.author_detail = (req,res,next)=>{
+export function author_detail (req,res,next){
     Promise.all([
         Author.findById(req.params.id).exec(),
         Book.find({author: req.params.id}).populate('genre').exec(),
@@ -51,11 +51,11 @@ exports.author_detail = (req,res,next)=>{
     })
 }
 
-exports.author_create_get = (req,res,next)=>{
+export function author_create_get (req,res,next){
     res.render('author_form',{title: 'Create Author'})
 }
 
-exports.author_create_post = [
+export const author_create_post = [
     upload.single('author_photo'),
     
     body('first_name')
@@ -114,7 +114,7 @@ exports.author_create_post = [
     }
 ]
 
-exports.author_delete_get = (req,res,next)=>{
+export function author_delete_get (req,res,next){
     Promise.all([
         Author.findById(req.params.id).exec(),
         Book.find({author: req.params.id}, 'title summary').exec(),
@@ -130,7 +130,7 @@ exports.author_delete_get = (req,res,next)=>{
 
 }
 
-exports.author_delete_post = (req,res,next)=>{
+export function author_delete_post (req,res,next){
     Promise.all([
         Author.findById(req.params.id).exec(),
         Book.find({author: req.params.id}, 'title summary').exec(),
@@ -149,7 +149,7 @@ exports.author_delete_post = (req,res,next)=>{
     })   
 }
 
-exports.author_update_get = (req,res,next)=>{
+export function author_update_get (req,res,next){
     Author.findById(req.params.id).exec()
     .then((author)=>{
         res.render('author_form',{
@@ -159,7 +159,7 @@ exports.author_update_get = (req,res,next)=>{
     })
 }
 
-exports.author_update_post = [
+export const author_update_post = [
     upload.single('author_photo'),
 
     body('first_name')

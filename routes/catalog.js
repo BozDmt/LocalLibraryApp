@@ -1,11 +1,11 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
 // const authentication = require('./auth')
 
-const author_controller = require('../controllers/authorController')
-const book_controller = require('../controllers/bookController')
-const bookInstance_controller = require('../controllers/bookinstanceController')
-const genre_controller = require('../controllers/genreController')
+import * as author_controller from '../controllers/authorController.js'
+import * as book_controller from '../controllers/bookController.js'
+import * as bookInstance_controller from '../controllers/bookinstanceController.js'
+import * as genre_controller from '../controllers/genreController.js'
 
 // router.use(authentication.refreshAccessToken)
 // router.use(authentication.authenticateToken)
@@ -71,4 +71,4 @@ router.get('/genres/ids',genre_controller.genre_id_list_get)
 //scripts
 // router.get('/scripts',book_controller)
 
-module.exports = router
+export {router as catalogRouter}

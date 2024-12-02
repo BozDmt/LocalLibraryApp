@@ -1,17 +1,14 @@
-require('dotenv').config()
-const express = require('express')
+// import { config } from 'dotenv' 
+import express from 'express'
 const router =  express.Router()
-const sessionController = require('../controllers/sessionController')
-const authenticate = require('../middleware/authenticate')
-const authorize = require('../middleware/authorize')
+import * as sessionController from '../controllers/sessionController.js'
+
+// const authenticate = require('../middleware/authenticate')
+import {authzMw} from '../middleware/authorize.js'
 
 router.get('/',sessionController.login_get)
-router.post('/',authenticate.login_post,sessionController.login_post)
-router.get('/user',authorize.verifyToken,sessionController.list)
-router.get('/logout',sessionController.login_logout)
-router.get('/user/create',sessionController.user_create_get)
-router.post('/user/create',sessionController.user_create_post)
-router.get('/user/update')
-router.get('/user/:id',sessionController.login_user_details)
+router.post('/',sessionController.login_post)
 
-module.exports = router
+export {router as loginRouter}
+//NOTE: when creating routes, always put the ones with a querystring last, otherwise the router will try to read the URL
+//and attempt to interpret variables from it
