@@ -130,14 +130,19 @@ export function logout(req,res){
 }
 
 export function user_details (req,res,next){//this isn't implemented yet; 
-    /*jwt.decode(req.cookies.jwt,{complete:true})
-        extract id
-    */
-    User.findById(req.params.id).exec()
+    const token = jwt.decode(req.cookies.jwt)
+
+    User.findById(token.uid).exec()
     .then((user)=>{
-        return [user,BookInstance.find({_id: { $in: user.books_loaned}}).populate('book').exec()]
+        return Promise.all([
+            user,
+            BookInstance.find({_id: { $in: user.books_loaned}})
+            .populate('book')
+            .exec()
+            .then(books=>books)
+        ])
     }).then(([user,books])=>{
-        res.render('user_details',{user:user,loanedBooks: books? books:null})
+        res.render('profile',{user:user,loanedBooks: books? books:null})
         res.end()
     })
 }
@@ -191,9 +196,15 @@ export const user_delete_post = [
 export function get_user (req,res){
     const token = jwt.decode(req.cookies.jwt)
     if(!token){
-        const results = JSON.stringify({'isUser':'false'})
+        const results = JSON.stringify({'role':'-1'})
         res.send(results)
     }
+
     const destructured = JSON.stringify(token.role)
     res.send(destructured)
+    // res.send(null)
+}
+
+export function user_settings(req,res){
+    res.render('user_settings')
 }

@@ -342,6 +342,11 @@ section label{
   width: 100%;
 }
 
+.flex-container{
+  display: flex;
+  flex-flow: row wrap;
+}
+
 .filter_checkbox{
   align-self: center;
   width: 30px;
@@ -489,12 +494,13 @@ button.mobile-dropdown-toggle{
 
 .profile{
   display: flex;
-  flex-wrap:wrap
+  flex-flow: column wrap;
+  
 }
 
 .profileinfo{
-  flex:1;
-  margin-left:2em;
+  /* flex:1; */
+  margin-top:2em;
 }
 
 .info{
@@ -503,8 +509,17 @@ button.mobile-dropdown-toggle{
 }
 
 .profilebooks{
-  flex:0;
+  flex:1;
   text-align: center;
+}
+
+.profilebooks ul{
+  list-style: none;
+  margin-top:1em;
+}
+
+.profilebooks ul li *{
+  font-size: large;
 }
 
 /* .profilesummary{
@@ -515,6 +530,7 @@ details > summary::before{
   position:absolute;
   border:1px solid gray;
   border-radius: 5px;
+  margin: 1 em 0;
 }
 
 .details-overlay[open] > summary::before{

@@ -23,9 +23,7 @@
 (function(){
   const navbar = document.querySelectorAll('.sidebar-nav li')
 
-    const navArray = Array.from(navbar)
-
-    navArray.forEach(li =>{
-        li.classList.add('active')
-    })  
+  Array.prototype.forEach.call(navbar, li =>{
+      li.classList.add('active')
+  })  
 })()//IIFE - immediately invoked FUNCTION EXPRESSION

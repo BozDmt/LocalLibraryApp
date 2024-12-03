@@ -4,6 +4,8 @@ import {body, validationResult} from'express-validator'
 import Book from'../models/book.js'
 import User from'../models/user.js'
 import jwt from'jsonwebtoken'
+import mongoose from 'mongoose'
+
 // import book from'../models/book.js'
 
 export function bookInstance_list (req,res,next){
@@ -259,20 +261,28 @@ export const bookinstance_return_post = [
     (req,res)=>{
         const user = jwt.decode(req.cookies.jwt,process.env.ACCESS_TOKEN_SECRET)
         
+        const book_id = new mongoose.Types.ObjectId(`${req.params.id}`)
+        console.log(book_id)
         Promise.all([
-            User.find({_id: user.id},{books_loaned:1,_id: 0}).exec(),
+            User.findByIdAndUpdate({_id: user.uid},{$pull:{books_loaned: book_id}}).exec(),
             BookInstance.findByIdAndUpdate(req.params.id,{status: 'Available'}).exec()
-        ])[0].then((userBooks)=>{            
+        ]).then(([user,userBooks])=>{            
             const userBooksLoaned = []
-            for(const book of userBooks){
-                for(const record of book['books_loaned']){
-                   if(record != req.params.id) 
-                    userBooksLoaned.push(record)
-                }
-            }
-            return userBooksLoaned
-        }).then((userBooksLoaned)=>{
-            User.findByIdAndUpdate(user.id,{books_loaned:userBooksLoaned}).exec()
+            console.log(userBooks)
+            Array.prototype.forEach.call(userBooks,(book)=>{
+                userBooksLoaned.push(book)
+            })
+            console.log('THE BOOKS LOANED ARE:')
+            console.log(...userBooksLoaned)
+            // for(const book of userBooks){
+            //     for(const record of book['books_loaned']){
+            //        if(record != req.params.id) 
+            //         userBooksLoaned.push(record)
+            //     }
+            // }
+            return [user,userBooksLoaned]
+        }).then(([userdata,loaned])=>{
+            User.findByIdAndUpdate(userdata._id,{books_loaned:loaned}).exec()
         }).then(()=>{
             res.redirect('/catalog')
         })

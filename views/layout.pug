@@ -13,7 +13,7 @@ html(lang='en')
       script(src='https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js'
       , integrity='sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+'
       ,crossorigin='anonymous')
-      script(src="/javascripts/animateSidebar.js" defer) 
+      //- script(src="/javascripts/animateSidebar.js" defer) 
       script(src="/javascripts/mobileNav.js" defer) 
       script( type="module" src="/javascripts/userData.js") 
       link(rel='stylesheet', href='/stylesheets/style.css')
@@ -37,14 +37,14 @@ html(lang='en')
                   a(href='/catalog/genres') All genres
                 li.animated
                   a(href='/catalog/bookinstances') All book copies
-                if(!logged_in)
-                  li.animated(id='signup')
-                    a(href='/login') Sign in
-                else
-                  li#profpage.animated
-                    a(href='/user') My profile
-                  li#proflogout.animated
-                    a(href='/logout') Sign out
+                //- if(!logged_in)
+                //-   li.animated(id='signup')
+                //-     a(href='/login') Sign in
+                //- else
+                //-   li#profpage.animated
+                //-     a(href='/user') My profile
+                //-   li#proflogout.animated
+                //-     a(href='/logout') Sign out
 
           div.col-sm-10
             block content

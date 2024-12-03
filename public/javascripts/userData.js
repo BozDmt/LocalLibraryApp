@@ -2,39 +2,40 @@ import './customLIElement.mjs'
 (function(){
     fetch('/getuser')
     .then(res=>res.json())
-    .then(role=>{
-        if(!role)
-            return
-        else{
+    .then(jsrsp=>{
+        function whichElem(){
+            const my_profile = jsrsp.role > -1? customizeElem('/user','My profile') : null            
 
-            const templateItem = document.querySelector('ul.sidebar-nav li:first-child')
-            const sidebar = document.querySelector('ul.sidebar-nav')
-            
-            const paths = ['/login','/logout','/user','http://www.ps3xploit.me']
-            for(let i = 0; i < 4; i++){
-                const newLI = document.createElement('li',{is:'custom-li'})
-                newLI.doHref = paths[i]
-                newLI.textContent = 'TESTING'
-                if(i == 3) newLI.textContent = 'ps3 Exploit'
-                sidebar.appendChild(newLI)
-            }
+            const log_out = my_profile != null? customizeElem('/logout','Sign out'): null
 
-            if(role == 1){
-                // 'USER'
-            }else if(role == 2){
-                // 'ADMIN'    
-            }
-            
-            Object.entries(role).forEach(entry=>{
-                // console.log(entry[1]== 'false'?'no user found':'user found')
-                if(entry[1] == 'false'){
-                    console.log('no user found')
-                    return
-                }
-            })
-            
+            const sign_in = customizeElem('/login','Sign in')
+
+            return my_profile == null? [sign_in] : [my_profile, log_out]
         }
 
+        function customizeElem(href,text){
+            const elem = document.createElement('li',{is: 'custom-li'})
+            elem.doHref = href
+            elem.textContent = text
+            return elem
+        }
+        
+        const sidebar = document.querySelector('ul.sidebar-nav')
+
+        const elements = whichElem()
+
+        Array.prototype.forEach.call(elements,(elem)=>{
+            sidebar.appendChild(elem)
+        })
+
+        requestAnimationFrame(()=>{
+            setTimeout(()=>{
+                Array.prototype.forEach.call(sidebar.children,(li)=>{
+                    li.classList.add( 'active')
+                })    
+            },10)
+        })
+        
     }).catch(err=>console.log(err))
 }
 )()

@@ -2,11 +2,11 @@ class customLI extends HTMLLIElement{
     
     constructor(){
         super()
+        this.classList.add('animated')
         this.anchor = document.createElement('a')
         this.anchor.textContent = ''
         this.anchor.href = '#'
         this.appendChild(this.anchor)
-        this.classList.add('active')
         
     }
     

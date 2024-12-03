@@ -1,0 +1,26 @@
+extends layout
+block append head
+    script(src="/javascripts/deleteUserDialog.js" defer) 
+block content
+    h2 Member since: 29.9.1999
+        details#myDetails
+            summary.btn.btn-primary update information
+            dialog#myDialog
+                form(method='POST')
+                    .form-group 
+                        label(for='username') Username:
+                        input#username.form-control(type='text',name='username' required)
+                        label(for='password') Password: 
+                        input#password.form-control(type='text',name='password' required)
+                    button.btn.btn-danger(type='submit') Update Info
+
+        details#myDetails
+            summary.btn.btn-primary delete profile    
+            dialog#myDialog
+                form(method='POST')
+                    .form-group 
+                        label(for='username') Username:
+                        input#username.form-control(type='text',name='username' required)
+                        label(for='password') Password: 
+                        input#password.form-control(type='text',name='password' required)
+                    button.btn.btn-danger(type='submit') Delete Profile

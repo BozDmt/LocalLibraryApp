@@ -70,18 +70,3 @@
     })
     .catch((e)=>{console.error(e)})
     })()
-
-
-    // const urls = [
-    //     '/catalog/genres/ids1',
-    //     '/catalog/genres/ids2',
-    //     '/catalog/genres/ids3'
-    //   ];
-      
-    //   Promise.all(urls.map(url => fetch(url).then(res => res.json())))
-    //     .then(results => {
-    //       console.log(results); // Array of results in the same order as URLs
-    //       // You can now access results[0], results[1], etc., or process them all together
-    //     })
-    //     .catch(error => console.error('Error fetching data:', error));
-      

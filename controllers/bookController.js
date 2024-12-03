@@ -22,8 +22,8 @@ const upload = multer({storage: storage})
     
 export function index (req,res,next){
     const token = req.cookies.jwt? jwt.decode(req.cookies.jwt): null
-    console.log(req.cookies)
-    let loggedIn = token? true : false
+    
+    // let loggedIn = token? true : false
         
     // const userdata = JSON.parse(req.user) || null
     // console.log(userdata)
@@ -49,7 +49,7 @@ export function index (req,res,next){
             genre_count: numGenres,
             bookinstance_count: numBookInstances,
             avl_bookinstance_count: numAvailableBookInstances,
-            logged_in: loggedIn
+            // logged_in: loggedIn
             // user_url:userURL.url,
             // user: userdata,
             //way to determine if there is a user, and which role he is
