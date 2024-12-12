@@ -4,6 +4,7 @@ import './customLIElement.mjs'
     .then(res=>res.json())
     .then(jsrsp=>{
         function whichElem(){
+            
             const my_profile = jsrsp.role > -1? customizeElem('/user','My profile') : null            
 
             const log_out = my_profile != null? customizeElem('/logout','Sign out'): null
@@ -27,14 +28,28 @@ import './customLIElement.mjs'
         Array.prototype.forEach.call(elements,(elem)=>{
             sidebar.appendChild(elem)
         })
+        const book_details_card = document.querySelector('.book_details')
 
-        requestAnimationFrame(()=>{
-            setTimeout(()=>{
-                Array.prototype.forEach.call(sidebar.children,(li)=>{
-                    li.classList.add( 'active')
-                })    
-            },10)
-        })
+        requestAnimationFrame(animate)
+
+        let start
+        
+        function animate(timestamp){
+            if(start === undefined) start = document.timeline.currentTime
+            const elapsed = timestamp - start
+            
+            if(elapsed > 16){
+                return
+            }
+            
+            Array.prototype.forEach.call(sidebar.children,(li)=>{
+                li.classList.add('active')
+            })
+            
+            requestAnimationFrame(animate)
+        }
+
+        
         
     }).catch(err=>console.log(err))
 }

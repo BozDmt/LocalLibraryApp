@@ -194,10 +194,10 @@ export const user_delete_post = [
 ]
 
 export function get_user (req,res){
-    const token = jwt.decode(req.cookies.jwt)
+    const token = req.cookies.jwt? jwt.decode(req.cookies.jwt) : null
     if(!token){
         const results = JSON.stringify({'role':'-1'})
-        res.send(results)
+        return res.send(results)
     }
 
     const destructured = JSON.stringify(token.role)

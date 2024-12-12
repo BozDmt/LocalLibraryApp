@@ -33,10 +33,11 @@ app.set('view engine', 'pug');
 // app.use(cors())
 function setNoCacheHeaders(req, res, next) {
   // Set cache-control headers to prevent caching
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
-  next();
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
+  res.setHeader('Cross-Origin-Opener-Policy','same-origin')
+  res.setHeader('Pragma', 'no-cache')
+  res.setHeader('Expires', '0')
+  next()
 }
 
 // Set no-cache headers

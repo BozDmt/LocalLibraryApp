@@ -5,26 +5,35 @@
     const section = document.querySelector('section')
     const bookContainer = document.querySelectorAll('.container')
     const pageUrl = window.location.toString().split('=')//.reduce()
+    const book_details_card = document.querySelector('.book_details')
 
-    Promise.all([fetch('/catalog/genres/ids'),fetch('catalog/books/')])
-    .then((result)=>result.json())
-    .then((data)=>{
-        
+    fetch('/catalog/genres/ids')
+    .then((result)=>{
+        try{
+            return result.json()
+        }
+        catch(e){
+            console.error(`first catch block: ${e}`)
+        }
+    })
+    .then((data)=>{    
+        // console.log( `the data value is: ${data}` )
+        if(!data) return
         const genre_ids = []
-        
-        
-        data[0].entries().forEach(([key,val]) => {
-            genre_ids.push(val._id)
+
+        data.forEach((key)=>{
+            genre_ids.push(key._id)
         })
 
         section.addEventListener('click', (event) => {
             if(event.target.tagName == 'INPUT'){
                 let j = 0
-                for(let i = 0; i < radios.length; i++){
-                    if(radios[i].checked === true){
+                Array.prototype.forEach.call(radios,(radio)=>{
+                    if(radio.checked === true){
                         j++
+                        // console.log('logic working')
                     }
-                }
+                })
         
                 if(event.target.defaultChecked == true){
                     event.target.defaultChecked = false
@@ -35,10 +44,11 @@
                     event.target.checked = true
                 }
         
-                if(j == radios.length || j == 0){
-                    btn.disabled = true
+                if(j === radios.length || j === 0){
+                    btn.setAttribute('disabled','')
                 }else{
-                    btn.disabled = false
+                    if(btn.getAttribute('disabled') !== null)
+                        btn.removeAttribute('disabled')
                 }
             }
         })
@@ -68,5 +78,5 @@
             }
         }
     })
-    .catch((e)=>{console.error(e)})
+    .catch((e)=>{console.error(`second catch block: ${e}`)})
     })()

@@ -6,6 +6,7 @@ block content
     h1= title 
     section 
         p Filters
+        //- button(type='button', id='filterbtn' disabled style='display:none;') Clear filters 
         each genre in genres 
             input(type="radio", name=genre.id, class='filter_checkbox') 
             label(for=genre.id) #{genre.name}

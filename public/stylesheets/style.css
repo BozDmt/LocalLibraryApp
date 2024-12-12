@@ -207,7 +207,14 @@ a, a:hover{
 .book_details{
   background-color: #cecece;
   padding: 10px;
+  border-radius:25px;
   margin: 5px 5px 5px 0;
+  transition:all 0.5s;
+}
+
+.grow{
+  transform: scale(1.1);
+  opacity:0.6;
 }
 
 .book_image{
@@ -218,12 +225,36 @@ a, a:hover{
   display: flex;
   justify-content: center;
   align-items: center;
+  
 }
 
 .book_title{
+  position:relative;
+}
+
+.book_title::after{content:"testing123"; display:flex; align-items:center; justify-content: center;z-index:999;}
+
+/* .book_title{
   background-color: bisque;
   margin-bottom: 30px;
   border: 5px inset #e9a95b;
+}  */
+
+.book_heading{
+  position:absolute;
+  top:-50%;
+  right: 33.33333333333333333333333333333333333333333333333333333333333333333333333333333333%;
+  background-color: bisque;
+  margin-bottom: 30px;
+  border: 5px inset #e9a95b;
+  border-radius:100px;
+  filter:blur(1px);
+}
+
+.book_heading::before{
+  content:"testing123";
+  color:transparent;
+  font-size:1em;
 }
 
 .styled-list{
@@ -380,6 +411,8 @@ h1{
 
 .col-sm-10{
   margin-top: 1em;
+  /* background-image: url('../images/circuitboard.svg');
+  background-size: cover; */
   padding: 0;
   padding-inline-start: 0;
   flex: 0 0 87.5%;

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+  <!-- Background -->
+  <rect width="500" height="500" fill="#228B22" />
+
+  <!-- Circuit lines -->
+  <line x1="100" y1="50" x2="400" y2="50" stroke="#D4AF37" stroke-width="4" />
+  <line x1="400" y1="50" x2="400" y2="400" stroke="#D4AF37" stroke-width="4" />
+  <line x1="100" y1="100" x2="300" y2="100" stroke="#D4AF37" stroke-width="4" />
+  <line x1="300" y1="100" x2="300" y2="350" stroke="#D4AF37" stroke-width="4" />
+  <line x1="150" y1="150" x2="400" y2="150" stroke="#D4AF37" stroke-width="4" />
+
+  <!-- Connection circles -->
+  <circle cx="100" cy="50" r="8" fill="#FFD700" />
+  <circle cx="400" cy="50" r="8" fill="#FFD700" />
+  <circle cx="100" cy="100" r="8" fill="#FFD700" />
+  <circle cx="300" cy="100" r="8" fill="#FFD700" />
+  <circle cx="150" cy="150" r="8" fill="#FFD700" />
+  <circle cx="400" cy="150" r="8" fill="#FFD700" />
+  <circle cx="400" cy="400" r="8" fill="#FFD700" />
+  <circle cx="300" cy="350" r="8" fill="#FFD700" />
+
+  <!-- Other details -->
+  <rect x="200" y="200" width="60" height="60" fill="#32CD32" stroke="#D4AF37" stroke-width="4" />
+  <line x1="200" y1="230" x2="260" y2="230" stroke="#FFD700" stroke-width="3" />
+  <line x1="230" y1="200" x2="230" y2="260" stroke="#FFD700" stroke-width="3" />
+</svg>
+

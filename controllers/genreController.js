@@ -3,8 +3,7 @@ import Book from '../models/book.js'
 import {body, validationResult} from 'express-validator'
 
 function listIds (){return new Promise((resolve,reject)=>{
-        const genreIds = Genre.find({},'_id').exec().then(result=>result)
-        resolve(genreIds)
+    Genre.find({},{_id: 1}).then(result=>resolve(result))
 })}
 
 export function genre_list(req,res,next){
@@ -94,7 +93,11 @@ export function genre_delete_post (req,res,next){
 }
 
 export function genre_id_list_get (req,res,next){
-    const jsonIds = listIds()
-    .then(result=>res.send(JSON.stringify(result)))
-    .catch((e)=>{console.log(e)})
+    listIds()
+    .then(result=>{
+        const data = JSON.stringify(result)
+        return res.send(data)
+    })
+    .catch((e)=>{console.error(e)})
+
 }

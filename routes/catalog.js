@@ -22,7 +22,7 @@ router.get('/book/:id/delete',book_controller.book_delete_get)
 router.post('/book/:id/delete',book_controller.book_delete_post)
 
 router.get('/book/:id',book_controller.book_detail)
-//books list must come after create, so as not to look up an empty list
+
 router.get('/books',/*authentication.refreshAccessToken,*/book_controller.book_list)
 
 //authors
